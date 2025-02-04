@@ -24,4 +24,9 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo "Hello, world, ${{ github.event.client_payload.dag_run_id }}!"
+        run: echo My payload ${{ github.event.client_payload.dag_run_id }}!
+      
+      - name: Run a multi-line script
+        run: |
+          salida=$(gcloud composer environments run instance dags list-runs --location=us-central1 -- --dag-id=my_dag | grep ${{ github.event.client_payload.dag_run_id }} | cut -d '|' -f 3 | tr -d ' ')
+          echo $salida.
