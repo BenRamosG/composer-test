@@ -28,5 +28,6 @@ jobs:
       
       - name: Run a multi-line script
         run: |
-          salida=date
-          echo $salida
+          current_date=$(date)
+          echo $current_date
+        shell: bash
