@@ -28,5 +28,5 @@ jobs:
       
       - name: Run a multi-line script
         run: |
-          salida=$(gcloud composer environments run instance dags list-runs --location=us-central1 -- --dag-id=my_dag | grep ${{ github.event.client_payload.dag_run_id }} | cut -d '|' -f 3 | tr -d ' ')
+          salida=date
           echo $salida
