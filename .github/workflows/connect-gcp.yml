@@ -16,13 +16,14 @@ jobs:
 
       - id: auth
         name: Google Cloud Auth
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2
         with:
           create_credentials_file: true
           workload_identity_provider: projects/979545525341/locations/global/workloadIdentityPools/github-identity-pool/providers/actions-github-idp
           service_account: github-actions-composer@telus-tir-project.iam.gserviceaccount.com
 
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
       - name: List bucket
-        run: |
-          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-          gsutil ls
+        run: gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
