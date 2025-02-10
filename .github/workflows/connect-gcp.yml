@@ -24,5 +24,5 @@ jobs:
 
       - name: List bucket
         run: |
-          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}
+          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
           gsutil ls
