@@ -1,0 +1,17 @@
+name: use_cgp
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  connect:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: ./.github/workflows/connect-gcp.yml
+
+      # Runs a single command using the runners shell
+      - name: Run buckets
+        run: gsutil ls
