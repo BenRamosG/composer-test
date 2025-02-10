@@ -1,0 +1,28 @@
+name: connect_gcp
+on:
+  workflow_dispatch:
+
+jobs:
+  connect:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: auth
+        name: Google Cloud Auth
+        uses: 'google-github-actions/auth@v1
+        with:
+          create_credentials_file: true
+          workload_identity_provider: projects/979545525341/locations/global/workloadIdentityPools/github-identity-pool/providers/actions-github-idp
+          service_account: github-actions-composer@telus-tir-project.iam.gserviceaccount.com
+
+      - name: List bucket
+        run: |
+          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}
+          gsutil ls
