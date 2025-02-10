@@ -20,7 +20,7 @@ jobs:
         with:
           create_credentials_file: true
           workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
-          service_account: "github-actions-composer@telus-tir-project.iam.gserviceaccount.com"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
 
       - name: set credentials file
         run: |-
