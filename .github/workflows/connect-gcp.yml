@@ -31,4 +31,4 @@ jobs:
           --cred-file=${{steps.auth.outputs.credentials_file_path}}
       
       - name: Use gcloud CLI
-        run: gcloud info
+        run: gsutil ls
