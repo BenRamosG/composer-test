@@ -23,6 +23,7 @@ jobs:
           service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
 
       - name: set credentials file
-        run: |-
-          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}" --force
-          gsutil ls
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          
+      - name: check buckets
+        run: gsutil ls
