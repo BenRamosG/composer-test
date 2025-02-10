@@ -22,8 +22,8 @@ jobs:
           workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
           service_account: "github-actions-composer@telus-tir-project.iam.gserviceaccount.com"
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: List bucket
+      - name: Login GCP
         run: gcloud auth login --cred-file=${{steps.auth.outputs.credentials_file_path}}
+
+      - name: Run test
+        run: gsutil ls
