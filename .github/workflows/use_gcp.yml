@@ -1,4 +1,4 @@
-name: use_cgp
+name: use_gcp
 
 on:
   workflow_dispatch:
