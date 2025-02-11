@@ -110,6 +110,7 @@ runs:
         service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
 
     - name: set credentials file
+      shell: bash
       run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
     - name: Read buckets
