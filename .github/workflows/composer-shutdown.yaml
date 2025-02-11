@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.master_variables.outputs.environment }}
+      composer_environment_name: ${{ steps.master_variables.outputs.composer_environment_name }}
+      composer_gcs_bucket: ${{ steps.master_variables.outputs.composer_gcs_bucket }}
+      region: ${{ steps.master_variables.outputs.region }}
 
     steps:
     - name: Checkout
@@ -48,3 +51,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4.2.2
+    - name: Check Variables
+      shell: bash
+      run: |
+        echo ${{ steps.master_variables.outputs.environment }}
+        echo ${{ steps.master_variables.outputs.composer_environment_name }}
+        echo ${{ steps.master_variables.outputs.composer_gcs_bucket }}
+        echo ${{ steps.master_variables.outputs.region }}
