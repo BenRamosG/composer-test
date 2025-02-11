@@ -1,0 +1,25 @@
+name: 02. Shutdown Composer
+
+on:
+  workflow_dispatch:
+  
+permissions: write-all
+
+jobs:
+  review:
+    name: Review Execution
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.master_variables.outputs.environment }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@4.2.2
+
+    - name: Retrieve variables from master.json
+      uses: ./.github/actions/master-variables
+      id: master_variables
+
+    - name: Add details to job summary
+      shell: bash
+      run: echo ${{ steps.master_variables.outputs.environment }}
