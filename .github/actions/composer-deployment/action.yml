@@ -115,5 +115,7 @@ runs:
 
     - name: Read buckets
       shell: bash
-      run: gsutil ls >> $GITHUB_STEP_SUMMARY
+      run: | 
+        execution_date=$(date +"%Y-%m-%d")
+        echo $execution_date
 
