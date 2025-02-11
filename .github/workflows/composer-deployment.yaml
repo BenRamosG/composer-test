@@ -1,0 +1,77 @@
+name: Composer Deployment and Shutdown
+description: Deploy or shutdown a GCP composer from a terraform module to a specific environment
+inputs:
+  environment:
+    description: 'Environment'
+    type: string
+    required: true
+  gcp-workload-identity-provider:
+    description: 'Workload Identity Provider to authenticate to GCP'
+    type: string
+    required: true
+  gcp-service-account:
+    description: 'Service Account to authenticate to GCP'
+    type: string
+    required: true
+  action:
+    description: 'Action to perform: apply or destroy'
+    type: string
+    required: true
+  working-directory: 
+    description: 'Working directory where the pulumi project is located'
+    type: string
+    required: true
+    default: ''
+  var-file: 
+    description: 'Terraform `tfvars` file that is relative to working-directory path. Eg: if working directory is `11-tir/env` and var file is under 11-tir folder it should be: `../qa-01.tfvars`'
+    type: string
+    required: false
+    default: ''
+  targets:
+    description: 'Modules and/or resources to apply or destroy separated by comma. Eg: module.composer,null_resource.set_airflow_variables'
+    type: string
+    required: true
+    default: ''
+  composer-environment-name:
+    description: 'Composer environment name'
+    type: string
+    required: true
+  composer-gcs-bucket:
+    description: 'Composer bucket name'
+    type: string
+    required: true
+  composer-location:
+    description: 'Composer location. Eg: northamerica-northeast1'
+    type: string
+    required: true
+  latest-snapshot-path:
+    description: 'Latest composer snapshot path. Eg: gs://qa-01-tir-composer/snapshots/thdp-tir-qa-d840_northamerica-northeast1_qa-01-tir-composer_2024-12-12T21-24-30'
+    type: string
+    required: false
+    default: ''
+  github-token:
+    description: 'Github token with access to create secrets'
+    type: string
+    required: true
+    default: ''
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add Github header to step summary
+      shell: bash
+      run: |
+        # Add Github header to step summary
+        echo "### Inputs" >> $GITHUB_STEP_SUMMARY
+        echo "- **Working Directory:** ${{ inputs.working-directory }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Terraform action:** ${{ inputs.action }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Targets:** ${{ inputs.targets }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Var file (tfvars):** ${{ inputs.var-file }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Composer Environment:** ${{ inputs.composer-environment-name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Composer GCS Bucket:** ${{ inputs.composer-gcs-bucket }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Composer Location:** ${{ inputs.composer-location }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Latest Snapshot Path:** ${{ inputs.latest-snapshot-path }}" >> $GITHUB_STEP_SUMMARY
+
+
