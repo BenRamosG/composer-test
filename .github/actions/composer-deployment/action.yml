@@ -57,10 +57,6 @@ inputs:
 
 
 runs:
-  permissions:
-    id-token: write
-    contents: read
-
   using: "composite"
   steps:
     - name: Add Github header to step summary
