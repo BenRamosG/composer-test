@@ -117,5 +117,5 @@ runs:
       shell: bash
       run: | 
         execution_date=$(date +"%Y-%m-%d")
-        echo $execution_date >> $GITHUB_STEP_SUMMARY
+        gcloud composer environments run instance dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=my_dag >> $GITHUB_STEP_SUMMARY
 
