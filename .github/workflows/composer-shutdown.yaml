@@ -56,6 +56,7 @@ jobs:
       shell: bash
       run: |
         echo ${{ secrets.PROVIDER_NAME }}
+        echo ${{ env.PROJECT_DIRECTORY }}
         echo ${{ needs.review.outputs.environment }}
         echo ${{ needs.review.outputs.composer_environment_name }}
         echo ${{ needs.review.outputs.composer_gcs_bucket }}
