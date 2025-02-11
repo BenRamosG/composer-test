@@ -1,0 +1,54 @@
+name: Get variables from master.json file
+description: Get variables from master.json file
+
+outputs:
+  environment: 
+    value: ${{ steps.variables.outputs.environment }}
+  project_id: 
+    value: ${{ steps.variables.outputs.project_id }}
+  region: 
+    value: ${{ steps.variables.outputs.region }}
+  composer_environment_name: 
+    value: ${{ steps.variables.outputs.composer_environment_name }}
+  composer_gcs_bucket: 
+    value: ${{ steps.variables.outputs.composer_gcs_bucket }}
+  shared_artifact_gcs_bucket: 
+    value: ${{ steps.variables.outputs.shared_artifact_gcs_bucket }}
+  artifact_gcs_path: 
+    value: ${{ steps.variables.outputs.artifact_gcs_path }}
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Create file
+      shell: bash
+      run: |
+        cat <<EOF > master.json
+        {
+            "project_id": "",
+            "environment": "production",
+            "region": "us-central1",
+            "composer_gcs_bucket": "gs://",
+            "composer_environment_name": "my-instance"
+        }
+        EOF
+  
+    - name: Get variables
+      shell: bash
+      id: variables
+      run: |
+        ENVIRONMENT=$(jq -r '.environment' master.json)
+        PROJECT_ID=$(jq -r '.project_id' master.json)
+        REGION=$(jq -r '.region' master.json)
+        COMPOSER_GCS_BUCKET=$(jq -r '.composer_gcs_bucket' master.json)
+        COMPOSER_ENVIRONMENT=$(jq -r '.composer_environment_name' master.json)
+        SHARED_ARTIFACT_GCS_BUCKET=$(jq -r '.shared_artifact_gcs_bucket' master.json)
+        ARTIFACT_GCS_PATH=$(jq -r '.artifact_gcs_path' master.json)
+        
+        echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
+        echo "project_id=${PROJECT_ID}" >> $GITHUB_OUTPUT
+        echo "region=${REGION}" >> $GITHUB_OUTPUT
+        echo "composer_environment_name=${COMPOSER_ENVIRONMENT}" >> $GITHUB_OUTPUT
+        echo "composer_gcs_bucket=${COMPOSER_GCS_BUCKET}" >> $GITHUB_OUTPUT
+        echo "shared_artifact_gcs_bucket=${SHARED_ARTIFACT_GCS_BUCKET}" >> $GITHUB_OUTPUT
+        echo "artifact_gcs_path=${ARTIFACT_GCS_PATH}" >> $GITHUB_OUTPUT
