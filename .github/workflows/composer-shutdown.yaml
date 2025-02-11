@@ -54,7 +54,7 @@ jobs:
     - name: Check Variables
       shell: bash
       run: |
-        echo ${{ steps.master_variables.outputs.environment }}
-        echo ${{ steps.master_variables.outputs.composer_environment_name }}
-        echo ${{ steps.master_variables.outputs.composer_gcs_bucket }}
-        echo ${{ steps.master_variables.outputs.region }}
+        echo ${{ needs.review.outputs.environment }}
+        echo ${{ needs.review.outputs.composer_environment_name }}
+        echo ${{ needs.review.outputs.composer_gcs_bucket }}
+        echo ${{ needs.review.outputs.region }}
