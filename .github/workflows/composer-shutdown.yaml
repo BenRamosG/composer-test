@@ -52,12 +52,17 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4.2.2
 
-    - name: Check Variables
-      shell: bash
-      run: |
-        echo ${{ secrets.PROVIDER_NAME }}
-        echo ${{ env.PROJECT_DIRECTORY }}
-        echo ${{ needs.review.outputs.environment }}
-        echo ${{ needs.review.outputs.composer_environment_name }}
-        echo ${{ needs.review.outputs.composer_gcs_bucket }}
-        echo ${{ needs.review.outputs.region }}
+    - name: Shutdown composer environment
+      uses: ./.github/actions/composer-deployment
+      with:
+        environment: ${{ needs.review.outputs.environment }}
+        gcp-workload-identity-provider: ${{ secrets.PROVIDER_NAME }}
+        gcp-service-account: ${{ secrets.SA_EMAIL }}
+        action: destroy
+        working-directory: ${{ env.PROJECT_DIRECTORY }}
+        targets: ${{ env.TARGETS }}
+        var-file: ../../${{ needs.review.outputs.environment }}.tfvars
+        composer-environment-name: ${{ needs.review.outputs.composer_environment_name }}
+        composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
+        composer-location: ${{ needs.review.outputs.region }}
+        github-token: ${{ secrets.TH_BOT_PAT }}
