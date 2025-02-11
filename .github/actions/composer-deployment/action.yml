@@ -73,3 +73,29 @@ runs:
         echo "- **Composer GCS Bucket:** ${{ inputs.composer-gcs-bucket }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Composer Location:** ${{ inputs.composer-location }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Latest Snapshot Path:** ${{ inputs.latest-snapshot-path }}" >> $GITHUB_STEP_SUMMARY
+
+
+    - name: Validate inputs
+      id: validate_inputs
+      shell: bash
+      run: |
+        # Validate inputs
+
+        if [[ "${{ inputs.action }}" != 'apply' && "${{ inputs.action }}" != 'destroy' ]]; then
+          errorMsg="Invalid action: ${{ inputs.action }}. Only apply or destroy are allowed."
+          echo $errorMsg
+          echo "### :x: Error on inputs validation" >> $GITHUB_STEP_SUMMARY
+          echo "- **Error**: $errorMsg" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        #validate snaphot path if action is apply
+        if [[ "${{ inputs.action }}" == 'apply' && "${{ inputs.latest-snapshot-path }}" == '' ]]; then
+          errorMsg="Latest snapshot path is required for apply action."
+          echo $errorMsg
+          echo "### :x: Error" >> $GITHUB_STEP_SUMMARY
+          echo "- **Error**: $errorMsg" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        echo "### Outputs" >> $GITHUB_STEP_SUMMARY
