@@ -117,5 +117,5 @@ runs:
       shell: bash
       run: | 
         execution_date=$(date +"%Y-%m-%d")
-        echo $execution_date
+        echo $execution_date >> $GITHUB_STEP_SUMMARY
 
