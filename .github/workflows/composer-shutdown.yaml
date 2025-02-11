@@ -22,4 +22,29 @@ jobs:
 
     - name: Add details to job summary
       shell: bash
-      run: echo ${{ steps.master_variables.outputs.environment }}
+      run: |
+        echo "This job will **shutdown Composer in ${{ steps.master_variables.outputs.environment }}** environment " >> $GITHUB_STEP_SUMMARY
+        echo "Before destroying composer, a snapshot will be saved and its path saved in Github variable: **LATEST_SNAPSHOT_PATH**" >> $GITHUB_STEP_SUMMARY
+        
+        echo "#### DETAILS " >> $GITHUB_STEP_SUMMARY
+        echo "**Environment:** ${{ steps.master_variables.outputs.environment }} " >> $GITHUB_STEP_SUMMARY
+        echo "**Terraform project folder:** ${{ env.PROJECT_DIRECTORY }} " >> $GITHUB_STEP_SUMMARY
+        echo "**Terraform tfvars file (relative to project folder):** ../../${{ steps.master_variables.outputs.environment }}.tfvars " >> $GITHUB_STEP_SUMMARY
+        echo "**Terraform modules/resources that will be affected:** " >> $GITHUB_STEP_SUMMARY
+        echo "- module.composer" >> $GITHUB_STEP_SUMMARY
+        echo "- null_resource.set_airflow_variables" >> $GITHUB_STEP_SUMMARY
+
+
+  composer:
+    name: Shutdown Composer Environment
+    needs: review
+    environment: ${{ needs.review.outputs.environment }} #it will require approval if the environment has deployment rules configured
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    timeout-minutes: 90
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.2.2
