@@ -51,9 +51,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4.2.2
+
     - name: Check Variables
       shell: bash
       run: |
+        echo ${{ secrets.PROVIDER_NAME }}
         echo ${{ needs.review.outputs.environment }}
         echo ${{ needs.review.outputs.composer_environment_name }}
         echo ${{ needs.review.outputs.composer_gcs_bucket }}
