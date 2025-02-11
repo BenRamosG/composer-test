@@ -28,8 +28,8 @@ runs:
             "project_id": "",
             "environment": "production",
             "region": "us-central1",
-            "composer_gcs_bucket": "gs://",
-            "composer_environment_name": "my-instance"
+            "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
+            "composer_environment_name": "instance"
         }
         EOF
   
