@@ -125,13 +125,11 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
-            dag_sucess=1
-            echo "dag_success=$dag_sucess" >> $GITHUB_OUTPUT
+            echo "dag_success=1" >> $GITHUB_OUTPUT
             break
           fi
         done
 
-        echo "dag_success=$dag_sucess" >> $GITHUB_OUTPUT
 
     - name: Print Var
       shell: bash
