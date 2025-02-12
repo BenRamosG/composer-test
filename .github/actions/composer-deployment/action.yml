@@ -133,6 +133,6 @@ runs:
     - name: Take snapshot of the composer
       id: take_snapshot
       shell: bash
-      if: ${{ inputs.action  == 'destroy' }} && ${{ steps.get-status-dag.outputs.dag_success }} == 1
+      if: ${{ inputs.action  == 'destroy' }} && ${{ steps.get-status-dag.outputs.dag_success }} == 2
       run: |
         echo "Si entro" >> $GITHUB_STEP_SUMMARY
