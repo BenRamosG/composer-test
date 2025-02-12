@@ -128,3 +128,6 @@ runs:
             break
           fi
         done
+
+        echo "{DAG_SUCCESS}=1" >> "$GITHUB_ENV"
+
