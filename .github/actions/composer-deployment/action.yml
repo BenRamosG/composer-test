@@ -116,7 +116,7 @@ runs:
     - name: Check DAG Status
       id: get-status-dag
       shell: bash
-      if: ${{ inputs.action  == 'destroy' }}
+      if: ${{ inputs.action  == 'apply' }}
       run: |
         execution_date=$(date +"%Y-%m-%d")
         while true; do
@@ -135,6 +135,6 @@ runs:
     - name: Take snapshot of the composer
       id: take_snapshot
       shell: bash
-      if: ${{ inputs.action  == 'apply' }}
+      if: ${{ inputs.action  == 'destroy' }}
       run: |
         echo "Start creating snapshot" >> $GITHUB_STEP_SUMMARY
