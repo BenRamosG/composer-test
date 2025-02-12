@@ -116,7 +116,7 @@ runs:
     - name: Check DAG Status
       id: get-status-dag
       shell: bash
-      if: ${{ inputs.action  == 'apply' }}
+      if: ${{ inputs.action  == 'destroy' }}
       run: |
         execution_date=$(date +"%Y-%m-%d")
         while true; do
