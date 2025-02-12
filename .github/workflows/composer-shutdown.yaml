@@ -58,7 +58,7 @@ jobs:
         environment: ${{ needs.review.outputs.environment }}
         gcp-workload-identity-provider: ${{ secrets.PROVIDER_NAME }}
         gcp-service-account: ${{ secrets.SA_EMAIL }}
-        action: destroy
+        action: app
         working-directory: ${{ env.PROJECT_DIRECTORY }}
         targets: ${{ env.TARGETS }}
         var-file: ../../${{ needs.review.outputs.environment }}.tfvars
