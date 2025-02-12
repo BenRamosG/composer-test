@@ -116,7 +116,8 @@ runs:
     - name: Check DAG Status
       id: get-status-dag
       shell: bash
-      run: | 
+      run: |
+        dag_success=0
         execution_date=$(date +"%Y-%m-%d")
         while true; do
           get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=my_dag | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
@@ -129,9 +130,9 @@ runs:
           fi
         done
 
-        echo "var=value" >> $GITHUB_OUTPUT
+        echo "dag_success=1" >> $GITHUB_OUTPUT
 
     - name: Print Var
       shell: bash
       run: |
-        echo ${{ steps.get-status-dag.outputs.var }} >> $GITHUB_STEP_SUMMARY
+        echo ${{ steps.get-status-dag.outputs.dag_success }} >> $GITHUB_STEP_SUMMARY
