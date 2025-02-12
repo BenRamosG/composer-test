@@ -90,7 +90,7 @@ runs:
         fi
 
         #validate snaphot path if action is apply
-        if [[ "${{ inputs.action }}" != 'apply' && "${{ inputs.latest-snapshot-path }}" == '' ]]; then
+        if [[ "${{ inputs.action }}" == 'apply' && "${{ inputs.latest-snapshot-path }}" == '' ]]; then
           errorMsg="Latest snapshot path is required for apply action."
           echo $errorMsg
           echo "### :x: Error" >> $GITHUB_STEP_SUMMARY
@@ -135,6 +135,6 @@ runs:
     - name: Take snapshot of the composer
       id: take_snapshot
       shell: bash
-      if: ${{ inputs.action  == 'destroy' }}
+      if: ${{ inputs.action  == 'apply' }}
       run: |
         echo "Start creating snapshot" >> $GITHUB_STEP_SUMMARY
