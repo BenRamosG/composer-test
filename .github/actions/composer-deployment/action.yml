@@ -137,4 +137,7 @@ runs:
       shell: bash
       if: ${{ inputs.action  == 'destroy' }}
       run: |
-        echo "Start creating snapshot" >> $GITHUB_STEP_SUMMARY
+        SNAPSHOT_OUTPUT=$(gcloud composer environments snapshots save ${{ inputs.composer-environment-name }} --location ${{ inputs.composer-location }} --format="value(snapshotPath)")
+        echo "SNAPSHOT_PATH=${SNAPSHOT_OUTPUT}" >> $GITHUB_ENV
+        echo "Snapshot saved to ${SNAPSHOT_OUTPUT} and its path will be stored in Github secret: LATEST_SNAPSHOT_PATH"
+        echo "- Snapshot Path Created: **${SNAPSHOT_OUTPUT}**" >> $GITHUB_STEP_SUMMARY
