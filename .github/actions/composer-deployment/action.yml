@@ -113,7 +113,8 @@ runs:
       shell: bash
       run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
-    - name: Read buckets
+    - name: Check DAG Status
+      id: get-status-dag
       shell: bash
       run: | 
         execution_date=$(date +"%Y-%m-%d")
@@ -122,10 +123,13 @@ runs:
           echo "Command output: $get_status" >> $GITHUB_STEP_SUMMARY
 
           if [ "$get_status" != "success" ]; then
-            echo "DAG still running. Waiting 1 minute..." >> $GITHUB_STEP_SUMMARY
             sleep 30
           else
-            echo "Command scceeded!" >> $GITHUB_STEP_SUMMARY
+            echo "DAG_SUCCESS=1" >> "$GITHUB_OUTPUT"
             break
           fi
         done
+
+    - name:
+      shell: bash
+      run: echo "DAG: ${{ steps.get-status-dag.outputs.DAG_SUCCESS }}"  >> $GITHUB_STEP_SUMMARY
