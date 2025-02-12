@@ -125,6 +125,7 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
+            echo "Master DAG is success at $date" >> $GITHUB_STEP_SUMMARY
             break
           fi
         done
@@ -135,4 +136,4 @@ runs:
       shell: bash
       if: ${{ inputs.action  == 'destroy' }}
       run: |
-        echo "Si entro" >> $GITHUB_STEP_SUMMARY
+        echo "Start creating snapshot" >> $GITHUB_STEP_SUMMARY
