@@ -125,11 +125,6 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
-            echo "DAG_SUCCESS=1" >> "$GITHUB_OUTPUT"
             break
           fi
         done
-
-    - name:
-      shell: bash
-      run: echo "DAG: ${{ steps.get-status-dag.outputs.DAG_SUCCESS }}"  >> $GITHUB_STEP_SUMMARY
