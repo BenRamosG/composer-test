@@ -125,8 +125,13 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
-            echo "KEY=VALUE" >>$GITHUB_OUTPUT
             break
           fi
         done
 
+        echo "var=value" >> $GITHUB_OUTPUT
+
+    - name: Print Var
+      shell: bash
+      run: |
+        echo {{ steps.get-status-dag.outputs.var }}
