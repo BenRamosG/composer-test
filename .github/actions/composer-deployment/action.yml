@@ -125,12 +125,12 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
-            echo "{dag_success}=1" >> "$GITHUB_ENV"
+            echo "dag_success=1" >> "$GITHUB_ENV"
             break
           fi
         done
 
     - name: Print Variable
       shell: bash
-      run: echo "Command output: {{ steps.get-status-dag.outputs.dag_success }} " >> $GITHUB_STEP_SUMMARY
+      run: echo "DAG Success: $dag_success" >> $GITHUB_STEP_SUMMARY
     
