@@ -116,7 +116,7 @@ runs:
     - name: Read buckets
       shell: bash
       run: | 
-        execution_date=2025-02-09
+        execution_date=$(date +"%Y-%m-%d")
         while true; do
           get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=my_dag | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
           echo "Command output: $get_status" >> $GITHUB_STEP_SUMMARY
