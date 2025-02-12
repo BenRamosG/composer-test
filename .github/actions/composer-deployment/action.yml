@@ -125,7 +125,8 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
-            echo "Master DAG is success at $(date)" >> $GITHUB_STEP_SUMMARY
+            echo "### Master DAG validation" >> $GITHUB_STEP_SUMMARY
+            echo "Master DAG was success at $(date +%Y-%m-%d_%H:%M:%S)" >> $GITHUB_STEP_SUMMARY
             break
           fi
         done
