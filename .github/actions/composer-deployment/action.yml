@@ -129,5 +129,9 @@ runs:
           fi
         done
 
-        echo "{DAG_SUCCESS}=1" >> "$GITHUB_ENV"
+        echo "{dag_success}=1" >> "$GITHUB_ENV"
 
+    - name: Print Variable
+      shell: bash
+      run: echo "Command output: {{ steps.get-status-dag.outputs.dag_success }} " >> $GITHUB_STEP_SUMMARY
+    
