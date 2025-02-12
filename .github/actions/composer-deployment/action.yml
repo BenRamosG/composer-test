@@ -120,18 +120,19 @@ runs:
         execution_date=$(date +"%Y-%m-%d")
         while true; do
           get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=my_dag | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
-          echo "Command output: $get_status" >> $GITHUB_STEP_SUMMARY
-
+          
           if [ "$get_status" != "success" ]; then
             sleep 30
           else
             echo "dag_success=1" >> $GITHUB_OUTPUT
+            echo "Command output: $get_status" >> $GITHUB_STEP_SUMMARY
             break
           fi
         done
 
-
-    - name: Print Var
+    - name: Take snapshot of the composer
+      id: take_snapshot
       shell: bash
+      if: ${{ inputs.action  == 'destroy' }} && ${{ steps.get-status-dag.outputs.dag_success }} == 1
       run: |
-        echo ${{ steps.get-status-dag.outputs.dag_success }} >> $GITHUB_STEP_SUMMARY
+        echo "Si entro" >> $GITHUB_STEP_SUMMARY
