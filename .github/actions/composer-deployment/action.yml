@@ -134,4 +134,4 @@ runs:
     - name: Print Var
       shell: bash
       run: |
-        echo {{ steps.get-status-dag.outputs.var }}
+        echo {{ steps.get-status-dag.outputs.var }} >> $GITHUB_STEP_SUMMARY
