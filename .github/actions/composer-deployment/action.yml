@@ -133,5 +133,5 @@ runs:
 
     - name: Print Variable
       shell: bash
-      run: echo "Command output: {{ steps.get-status-dag.outputs.dag_success }} " >> $GITHUB_STEP_SUMMARY
+      run: echo "Command output: {{ steps.get-status-dag.outputs }} " >> $GITHUB_STEP_SUMMARY
     
