@@ -33,8 +33,8 @@ runs:
             "environment": "production",
             "region": "us-central1",
             "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
-            "composer_environment_name": "instance"
-            "master_dag": "my_dag"
+            "composer_environment_name": "instance",
+            "master_dag": "my_dag",
             "master_dag_wait": 30
         }
         EOF
