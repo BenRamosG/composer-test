@@ -136,7 +136,7 @@ runs:
           if [ "$get_status" != "success" ]; then
             sleep ${{ inputs.master-dag-wait }}
           else
-            echo "- Master DAG was success at $(date +%Y-%m-%d-%H:%M:%S)" >> $GITHUB_STEP_SUMMARY
+            echo "- Master DAG succeed at **$(date +%Y-%m-%d-%H:%M:%S)**" >> $GITHUB_STEP_SUMMARY
             break
           fi
         done
