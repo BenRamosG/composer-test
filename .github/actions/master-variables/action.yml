@@ -16,6 +16,10 @@ outputs:
     value: ${{ steps.variables.outputs.shared_artifact_gcs_bucket }}
   artifact_gcs_path: 
     value: ${{ steps.variables.outputs.artifact_gcs_path }}
+  master_dag:
+    value: ${{ steps.variables.outputs.master_dag }}
+  master_dag_wait:
+    value: ${{ steps.variables.outputs.master_dag_wait }}
     
 runs:
   using: "composite"
@@ -30,6 +34,8 @@ runs:
             "region": "us-central1",
             "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
             "composer_environment_name": "instance"
+            "master_dag": "my_dag"
+            "master_dag_wait": 30
         }
         EOF
   
@@ -44,6 +50,8 @@ runs:
         COMPOSER_ENVIRONMENT=$(jq -r '.composer_environment_name' master.json)
         SHARED_ARTIFACT_GCS_BUCKET=$(jq -r '.shared_artifact_gcs_bucket' master.json)
         ARTIFACT_GCS_PATH=$(jq -r '.artifact_gcs_path' master.json)
+        MASTER_DAG=$(jq -r '.master_dag' master.json)
+        MASTER_DAG_WAIT=$(jq -r '.master_dag_wait' master.json)
         
         echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
         echo "project_id=${PROJECT_ID}" >> $GITHUB_OUTPUT
@@ -52,3 +60,5 @@ runs:
         echo "composer_gcs_bucket=${COMPOSER_GCS_BUCKET}" >> $GITHUB_OUTPUT
         echo "shared_artifact_gcs_bucket=${SHARED_ARTIFACT_GCS_BUCKET}" >> $GITHUB_OUTPUT
         echo "artifact_gcs_path=${ARTIFACT_GCS_PATH}" >> $GITHUB_OUTPUT
+        echo "master_dag=${MASTER_DAG}" >> $GITHUB_OUTPUT
+        echo "master_dag_wait=${MASTER_DAG_WAIT}" >> $GITHUB_OUTPUT
