@@ -14,6 +14,8 @@ jobs:
       composer_environment_name: ${{ steps.master_variables.outputs.composer_environment_name }}
       composer_gcs_bucket: ${{ steps.master_variables.outputs.composer_gcs_bucket }}
       region: ${{ steps.master_variables.outputs.region }}
+      master_dag: ${{ steps.master_variables.outputs.master_dag }}
+      master_dag_wait: ${{ steps.master_variables.outputs.master_dag_wait }}
 
     steps:
     - name: Checkout
@@ -66,3 +68,5 @@ jobs:
         composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
         composer-location: ${{ needs.review.outputs.region }}
         github-token: ${{ secrets.TH_BOT_PAT }}
+        master_dag: ${{ needs.review.outputs.master_dag }}
+        master_dag_wait: ${{ needs.review.outputs.master_dag_wait }}
