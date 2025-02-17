@@ -68,5 +68,5 @@ jobs:
         composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
         composer-location: ${{ needs.review.outputs.region }}
         github-token: ${{ secrets.TH_BOT_PAT }}
-        master_dag: ${{ needs.review.outputs.master_dag }}
-        master_dag_wait: ${{ needs.review.outputs.master_dag_wait }}
+        master-dag: ${{ needs.review.outputs.master_dag }}
+        master-dag-wait: ${{ needs.review.outputs.master_dag_wait }}
