@@ -60,7 +60,12 @@ inputs:
     required: true
     default: ''
   master-dag-wait:
-    description: 'Time in seconds to validate status from Master DAG'
+    description: 'Time in minutes to validate status from Master DAG'
+    type: string
+    required: true
+    default: ''
+  master-dag-timeout:
+    description: 'Time in minutes to wait for a complete execution'
     type: string
     required: true
     default: ''
@@ -130,24 +135,9 @@ runs:
       if: ${{ inputs.action  == 'destroy' }}
       run: |
         execution_date=$(date +"%Y-%m-%d")
-        while true; do
-          get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=${{ inputs.master-dag }} | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
-          
-          if [ "$get_status" != "success" ]; then
-            sleep ${{ inputs.master-dag-wait }}
-          else
-            echo "- Master DAG succeed at **$(date +%Y-%m-%d-%H:%M:%S)**" >> $GITHUB_STEP_SUMMARY
-            break
-          fi
-        done
+        start_time=$(date +%s)
+        timeout_seconds=$(( ${{ inputs.master-dag-timeout }} * 60 ))
 
-        
-    - name: Take snapshot of the composer
-      id: take_snapshot
-      shell: bash
-      if: ${{ inputs.action  == 'destroy' }}
-      run: |
-        SNAPSHOT_OUTPUT=$(gcloud composer environments snapshots save ${{ inputs.composer-environment-name }} --location ${{ inputs.composer-location }} --format="value(snapshotPath)")
-        echo "SNAPSHOT_PATH=${SNAPSHOT_OUTPUT}" >> $GITHUB_ENV
-        echo "Snapshot saved to ${SNAPSHOT_OUTPUT} and its path will be stored in Github secret: LATEST_SNAPSHOT_PATH"
-        echo "- Snapshot Path Created: **${SNAPSHOT_OUTPUT}**" >> $GITHUB_STEP_SUMMARY
+        echo "- Timeout in seconds is: $timeout_seconds" >> $GITHUB_STEP_SUMMARY
+
+
