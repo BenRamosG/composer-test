@@ -37,8 +37,8 @@ runs:
             "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
             "composer_environment_name": "instance",
             "master_dag": "my_dag",
-            "master_dag_wait": 5,
-            "master_dag_timeout": 30
+            "master_dag_wait": 1,
+            "master_dag_timeout": 5  
         }
         EOF
   
