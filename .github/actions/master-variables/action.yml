@@ -38,7 +38,7 @@ runs:
             "composer_environment_name": "instance",
             "master_dag": "my_dag",
             "master_dag_wait": 1,
-            "master_dag_timeout": 5  
+            "master_dag_timeout": 2
         }
         EOF
   
