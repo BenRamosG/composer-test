@@ -20,6 +20,8 @@ outputs:
     value: ${{ steps.variables.outputs.master_dag }}
   master_dag_wait:
     value: ${{ steps.variables.outputs.master_dag_wait }}
+  master_dag_timeout:
+    value: ${{ steps.variables.outputs.master_dag_timeout }}
     
 runs:
   using: "composite"
@@ -35,7 +37,8 @@ runs:
             "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
             "composer_environment_name": "instance",
             "master_dag": "my_dag",
-            "master_dag_wait": 30
+            "master_dag_wait": 5
+            "master_dag_timeout": 30
         }
         EOF
   
@@ -52,6 +55,7 @@ runs:
         ARTIFACT_GCS_PATH=$(jq -r '.artifact_gcs_path' master.json)
         MASTER_DAG=$(jq -r '.master_dag' master.json)
         MASTER_DAG_WAIT=$(jq -r '.master_dag_wait' master.json)
+        MASTER_DAG_TIMEOUT=$(jq -r '.master_dag_timeout' master.json)
         
         echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
         echo "project_id=${PROJECT_ID}" >> $GITHUB_OUTPUT
@@ -62,3 +66,4 @@ runs:
         echo "artifact_gcs_path=${ARTIFACT_GCS_PATH}" >> $GITHUB_OUTPUT
         echo "master_dag=${MASTER_DAG}" >> $GITHUB_OUTPUT
         echo "master_dag_wait=${MASTER_DAG_WAIT}" >> $GITHUB_OUTPUT
+        echo "master_dag_timeout=${MASTER_DAG_TIMEOUT}" >> $GITHUB_OUTPUT
