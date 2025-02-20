@@ -16,6 +16,7 @@ jobs:
       region: ${{ steps.master_variables.outputs.region }}
       master_dag: ${{ steps.master_variables.outputs.master_dag }}
       master_dag_wait: ${{ steps.master_variables.outputs.master_dag_wait }}
+      master_dag_timeout: ${{ steps.master_variables.outputs.master_dag_timeout }}
 
     steps:
     - name: Checkout
@@ -70,3 +71,4 @@ jobs:
         github-token: ${{ secrets.TH_BOT_PAT }}
         master-dag: ${{ needs.review.outputs.master_dag }}
         master-dag-wait: ${{ needs.review.outputs.master_dag_wait }}
+        master-dag-timeout: ${{ needs.review.outputs.master_dag_timeout }}
