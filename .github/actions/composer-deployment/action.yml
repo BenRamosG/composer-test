@@ -147,7 +147,8 @@ runs:
           echo "Elapsed time: $elapsed_time seconds"
 
           if [ "$elapsed_time" -ge "$timeout_seconds" ]; then
-            echo "- Master DAG validation timed out" >> $GITHUB_STEP_SUMMARY
+            echo "### :x: Error" >> $GITHUB_STEP_SUMMARY
+            echo "- **Error**: Master DAG validation status timed out " >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=${{ inputs.master-dag }} | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
