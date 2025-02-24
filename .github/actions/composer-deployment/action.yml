@@ -132,34 +132,8 @@ runs:
     - name: Check DAG Status
       id: get-status-dag
       shell: bash
-      if: ${{ inputs.action  == 'destroy' }}
+      if: ${{ inputs.action  == 'destroy' && inputs.master-dag == '' }}
       run: |
-        execution_date=$(date +"%Y-%m-%d")
-        start_time=$(date +%s)
-        timeout_seconds=$(( ${{ inputs.master-dag-timeout }} * 60 ))
-        wait_seconds=$(( ${{ inputs.master-dag-wait }} * 60 ))
-
-        while true; do
-          
-          current_time=$(date +%s)
-          elapsed_time=$((current_time - start_time))
-
-          echo "Elapsed time: $elapsed_time seconds"
-
-          if [ "$elapsed_time" -ge "$timeout_seconds" ]; then
-            echo "### :x: Error" >> $GITHUB_STEP_SUMMARY
-            echo "- **Error**: Timeout (${{ inputs.master-dag-timeout }} minutes) was reached " >> $GITHUB_STEP_SUMMARY
-            exit 1
-          else
-            get_status=$(gcloud composer environments run ${{ inputs.composer-environment-name }} dags list-runs --location=${{ inputs.composer-location }} -- --dag-id=${{ inputs.master-dag }} | awk -F'|' '$4 ~ /'"$execution_date"'/ {print $3; exit}' | tr -d '[:space:]')
-            echo "Current status is" $get_status
-
-            if [ "$get_status" != "success" ]; then
-              sleep $wait_seconds
-            else
-              echo "- Master DAG succeed at **$(date +%Y-%m-%d-%H:%M:%S)**" >> $GITHUB_STEP_SUMMARY
-              break
-            fi
-          fi
-        done
+        echo "This arrive" >> $GITHUB_STEP_SUMMARY
+        
 
