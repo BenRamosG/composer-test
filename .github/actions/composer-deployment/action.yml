@@ -132,7 +132,7 @@ runs:
     - name: Check DAG Status
       id: get-status-dag
       shell: bash
-      if: ${{ inputs.action  == 'destroy' && inputs.master-dag == '' }}
+      if: ${{ inputs.action  == 'destroy' && inputs.master-dag != '' }}
       run: |
         echo "This arrive" >> $GITHUB_STEP_SUMMARY
         
