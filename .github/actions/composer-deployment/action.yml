@@ -157,7 +157,7 @@ runs:
             if [ "$get_status" != "success" ]; then
               sleep $wait_seconds
             else
-              echo "- ${{ inputs.master-dag }} is succeed at **$(date +%Y-%m-%d-%H:%M:%S)**" >> $GITHUB_STEP_SUMMARY
+              echo "- ${{ inputs.master-dag }} process was successful at **$(date +%Y-%m-%d-%H:%M:%S)**" >> $GITHUB_STEP_SUMMARY
               break
             fi
           fi
