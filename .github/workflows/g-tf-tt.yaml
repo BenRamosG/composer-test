@@ -33,7 +33,20 @@ jobs:
         echo "Base branch either does not match main (${{ steps.master_variables.outputs.environment }}) or is not a feature branch prefixed with ${{ steps.master_variables.outputs.environment }}"
         exit 1
 
+    - name: Google Cloud Auth 
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        create_credentials_file: true
+        workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+        service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+    - name: set credentials file
+      shell: bash
+      run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+
     - name: Add details to job summary
       shell: bash
       run: |
-        echo " Variable: ${{github.base_ref}} * ${{github.ref}}  " >> $GITHUB_STEP_SUMMARY
+        echo " Variable: ${{ env.ACTION }}  " >> $GITHUB_STEP_SUMMARY
