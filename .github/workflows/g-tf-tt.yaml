@@ -2,7 +2,7 @@ name: Build with Workload ID Federation
 
 on:
   push:
-    branches: [ "original" ]
+    branches: [ "dev" ]
 
 jobs:
   setup-build-deploy:
