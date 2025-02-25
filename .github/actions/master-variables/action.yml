@@ -32,7 +32,7 @@ runs:
         cat <<EOF > master.json
         {
             "project_id": "",
-            "environment": "production",
+            "environment": "dev",
             "region": "us-central1",
             "composer_gcs_bucket": "gs://us-central1-instance-1833cf5d-bucket/dags",
             "composer_environment_name": "instance",
