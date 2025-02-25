@@ -19,6 +19,20 @@ jobs:
       uses: ./.github/actions/master-variables
       id: master_variables
 
+    - name: Set variables
+      id: setvars
+      run: |
+        if [[ "${{github.base_ref}}" == ${{ steps.master_variables.outputs.environment }}-* || "${{github.ref}}" == refs/heads/${{ steps.master_variables.outputs.environment }}-* ]]; then
+          echo "ACTION=plan" >> $GITHUB_ENV
+          exit 0
+        fi
+        if [[ "${{github.base_ref}}" == "${{ steps.master_variables.outputs.environment }}" || "${{github.ref}}" == "refs/heads/${{ steps.master_variables.outputs.environment }}" ]]; then
+          echo "ACTION=apply" >> $GITHUB_ENV
+          exit 0
+        fi
+        echo "Base branch either does not match main (${{ steps.master_variables.outputs.environment }}) or is not a feature branch prefixed with ${{ steps.master_variables.outputs.environment }}"
+        exit 1
+
     - name: Add details to job summary
       shell: bash
       run: |
