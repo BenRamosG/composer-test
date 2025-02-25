@@ -22,4 +22,4 @@ jobs:
     - name: Add details to job summary
       shell: bash
       run: |
-        echo "This job will **shutdown Composer in ${{ steps.master_variables.outputs.environment }}** environment " >> $GITHUB_STEP_SUMMARY
+        echo " Variable: ${{github.base_ref}} * ${{github.ref}}  " >> $GITHUB_STEP_SUMMARY
