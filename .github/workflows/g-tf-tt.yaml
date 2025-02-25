@@ -1,0 +1,16 @@
+name: Build with Workload ID Federation
+
+on:
+  push:
+    branches: [ "original" ]
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
