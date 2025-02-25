@@ -18,3 +18,8 @@ jobs:
     - name: Retrieve variables from master.json
       uses: ./.github/actions/master-variables
       id: master_variables
+
+    - name: Add details to job summary
+      shell: bash
+      run: |
+        echo "This job will **shutdown Composer in ${{ steps.master_variables.outputs.environment }}** environment " >> $GITHUB_STEP_SUMMARY
