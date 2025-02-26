@@ -51,8 +51,28 @@ jobs:
       with:
         dir_names: false
         files: dags/**
+
+    - name: Install utilities
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        if ! command -v zip &> /dev/null; then
+          echo "Zip not found, installing..." \
+          sudo apt-get update \
+          && sudo apt-get install zip -y
+        fi
+
+    - name: List updated JSON Files
+      id: json_files
+      if: steps.changed-files.outputs.any_changed == 'true'
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+        echo "${ALL_CHANGED_FILES}" | tr ' ' '\n' | awk -F'/' '{print $2}' | sort -u > changed-dirs.txt
+        cat changed-dirs.txt
+        JSON_LIST=$(cat changed-dirs.txt | tr '\n' ' ')
+        echo "JSON_FILES=$JSON_LIST" >> $GITHUB_ENV  
         
     - name: Add details to job summary
       shell: bash
       run: |
-        echo " ${{ steps.changed-files.outputs.all_changed_files }}  " >> $GITHUB_STEP_SUMMARY
+        echo " ${{ env.JSON_FILES }}  " >> $GITHUB_STEP_SUMMARY
