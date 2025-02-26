@@ -71,6 +71,35 @@ jobs:
         cat changed-dirs.txt
         JSON_LIST=$(cat changed-dirs.txt | tr '\n' ' ')
         echo "JSON_FILES=$JSON_LIST" >> $GITHUB_ENV  
+
+    - name: Parse JSON and unzip DAG
+      id: parse_json_and_unzip
+      if: steps.changed-files.outputs.any_changed == 'true'
+      run: |
+        cd dags
+        for FILE in ${{ env.JSON_FILES }}; do
+          dagname=$(jq -r '.dag_name' "$FILE") 
+          dagversion=$(jq -r '.version' "$FILE")
+          if [ -z "$dagname" ]; then
+              echo "Error: Dagname not found in JSON file"
+              exit 1
+          fi
+          if [ -z "$dagversion" ]; then
+              echo "Error: Dagversion not found in JSON file"
+              exit 1
+          fi
+          if [[ "${{ steps.master_variables.outputs.environment }}" != "dev" && ! "$dagversion" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9_-]+\.[0-9]+)?$ ]]; then
+            echo "Environment is not dev, please provide the required tag for dagname: '$dagname'"
+            echo "================ Skipping the above Dag File =============="
+          else
+            zip_file="${dagname}_${dagversion}.zip"
+
+            TEMP_DIR="${dagname}_dir"
+            echo "List composer artifacts to be downloaded: $zip_file"
+          fi
+          echo " $dagname " >> $GITHUB_STEP_SUMMARY 
+          echo " $dagversion " >> $GITHUB_STEP_SUMMARY
+        done
         
     - name: Add details to job summary
       shell: bash
