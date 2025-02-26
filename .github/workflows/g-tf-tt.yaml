@@ -45,8 +45,14 @@ jobs:
       shell: bash
       run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
-
+    - name: Get Changed files 
+      id: changed-files
+      uses: tj-actions/changed-files@v44
+      with:
+        dir_names: false
+        files: dags/**
+        
     - name: Add details to job summary
       shell: bash
       run: |
-        echo " Variable: ${{ env.ACTION }}  " >> $GITHUB_STEP_SUMMARY
+        echo " ${{ steps.changed-files.outputs.all_changed_files }}  " >> $GITHUB_STEP_SUMMARY
