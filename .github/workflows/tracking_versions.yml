@@ -1,0 +1,25 @@
+name: Capture Tag Value
+
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  capture_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0 # Important for fetching tags
+
+      - name: Get Tag Name
+        id: get_tag
+        run: |
+          echo "TAG_NAME=${GITHUB_REF##refs/tags/}" >> $GITHUB_ENV
+          echo "Tag name is: ${GITHUB_ENV_TAG_NAME}"
+
+      - name: Use Tag Value
+        run: |
+          echo "The tag value is: ${{ env.TAG_NAME }}" >> $GITHUB_STEP_SUMMARY
