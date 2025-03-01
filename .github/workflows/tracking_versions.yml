@@ -13,10 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
         with:
-          fetch-depth: 0 # Important for fetching tags
+          fetch-depth: 1 # Important for fetching tags
 
       - name: Get Tag Name
         id: get_tag
         run: |
-          COMMIT_MESSAGES=$(git log --pretty=format:"%s")
+          COMMIT_MESSAGES=$(git log -1 --pretty=format:"%B")
           echo "$COMMIT_MESSAGES" >> $GITHUB_STEP_SUMMARY
