@@ -3,8 +3,7 @@ name: Capture Tag Value
 on:
   push:
     branches:
-      - main
-
+      - dev
       
 jobs:
   capture_tag:
