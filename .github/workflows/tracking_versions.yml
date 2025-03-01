@@ -2,8 +2,10 @@ name: Capture Tag Value
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+
+      
 jobs:
   capture_tag:
     runs-on: ubuntu-latest
@@ -17,9 +19,5 @@ jobs:
       - name: Get Tag Name
         id: get_tag
         run: |
-          echo "TAG_NAME=${GITHUB_REF##refs/tags/}" >> $GITHUB_ENV
-          echo "Tag name is: ${GITHUB_ENV_TAG_NAME}"
-
-      - name: Use Tag Value
-        run: |
-          echo "The tag value is: ${{ env.TAG_NAME }}" >> $GITHUB_STEP_SUMMARY
+          COMMIT_MESSAGES=$(git log --pretty=format:"%s")
+          echo "$COMMIT_MESSAGES" >> $GITHUB_STEP_SUMMARY
