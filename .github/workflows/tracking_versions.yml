@@ -44,5 +44,5 @@ jobs:
       - name: Check Last Version
         run: |
           echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
-          last_version=$(jq -r ".$VARIABLE_NAME" dags/version.json)
+          last_version=$(jq -r ".$VARIABLE_NAME" dags/dags_versions.json)
           echo "The last version is: $last_version" >> $GITHUB_STEP_SUMMARY
