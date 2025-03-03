@@ -47,9 +47,9 @@ jobs:
           else
             major=$(echo "$last_version" | cut -d'.' -f1)
             minor=$(echo "$last_version" | cut -d'.' -f2)
-            patch=$(echo "$last_version" | cut -d'.' -f3)
+            patchfix=$(echo "$last_version" | cut -d'.' -f3)
 
-            echo "$major.$minor.$path" >> $GITHUB_STEP_SUMMARY
+            echo "$major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
 
             # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
             kind_modification=$(echo "Fix: blabla" | tr '[:upper:]' '[:lower:]')
@@ -57,18 +57,18 @@ jobs:
             case "$kind_modification" in
               *fix*)
                 echo "Kind: Fix" >> $GITHUB_STEP_SUMMARY
-                # patch=(($patch + 1))
+                # patchfix=(($patchfix + 1))
                 ;;
               *enhance*)
                 echo "Kind: Enhancement" >> $GITHUB_STEP_SUMMARY
                 # minor=(($minor + 1))
-                #patch=0
+                # patchfix=0
                 ;;
               *release*)
                 echo "Kind: Release" >> $GITHUB_STEP_SUMMARY
                 # major=(($major + 1))
                 # minor=0
-                # patch=0
+                # patchfix=0
                 ;;
               *)
                 echo "Kind: Other or unknown" >> $GITHUB_STEP_SUMMARY 
