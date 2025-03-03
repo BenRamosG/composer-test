@@ -1,6 +1,5 @@
 name: Capture Tag Value
 
-	
 on:
   workflow_dispatch:
       
