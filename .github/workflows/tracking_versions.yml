@@ -23,7 +23,7 @@ jobs:
           dir_names: false
           files: dags/**/*.py
       
-      - name: Get name DAG modified
+      - name: Get DAG name
         id: json_files
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
@@ -32,7 +32,7 @@ jobs:
           echo "$filename" >> $GITHUB_STEP_SUMMARY
           echo "DAG=$filename" >> $GITHUB_ENV
 
-      - name: create dummy
+      - name: DUMMY - Get DAG name
         env:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
@@ -47,10 +47,18 @@ jobs:
           last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
 
           if [ "$last_version" == "null" ]; then
-            last_version=0.0.1
+            last_version=1.0.0
+          else
+            major=$(echo "$last_version" | cut -d'.' -f1)
+            minor=$(echo "$last_version" | cut -d'.' -f2)
+            patch=$(echo "$last_version" | cut -d'.' -f3)
           fi
-          
+
           echo "The last version is: $last_version" >> $GITHUB_STEP_SUMMARY
+          echo "$major" >> $GITHUB_STEP_SUMMARY
+          echo "$minor" >> $GITHUB_STEP_SUMMARY
+          echo "$patch" >> $GITHUB_STEP_SUMMARY
+          
 
 
           
