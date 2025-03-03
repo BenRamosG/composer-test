@@ -57,7 +57,7 @@ jobs:
             case "$kind_modification" in
               *fix*)
                 echo "Kind: Fix" >> $GITHUB_STEP_SUMMARY
-                patchfix=(($patchfix + 1))
+                patchfix=$((patchfix + 1))
                 ;;
               *enhance*)
                 echo "Kind: Enhancement" >> $GITHUB_STEP_SUMMARY
