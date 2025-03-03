@@ -49,6 +49,8 @@ jobs:
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patch=$(echo "$last_version" | cut -d'.' -f3)
 
+            echo "$major.$minor.$path" >> $GITHUB_STEP_SUMMARY
+
             # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
             kind_modification=$(echo "Fix: blabla" | tr '[:upper:]' '[:lower:]')
           
@@ -60,7 +62,7 @@ jobs:
               *enhance*)
                 echo "Kind: Enhancement" >> $GITHUB_STEP_SUMMARY
                 # minor=(($minor + 1))
-                patch=0
+                #patch=0
                 ;;
               *release*)
                 echo "Kind: Release" >> $GITHUB_STEP_SUMMARY
