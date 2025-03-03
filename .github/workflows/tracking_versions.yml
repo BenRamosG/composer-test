@@ -52,6 +52,7 @@ jobs:
             major=$(echo "$last_version" | cut -d'.' -f1)
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patch=$(echo "$last_version" | cut -d'.' -f3)
+            echo "This version is: $last_version" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "The last version is: $last_version" >> $GITHUB_STEP_SUMMARY
