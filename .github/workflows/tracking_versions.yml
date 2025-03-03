@@ -41,7 +41,7 @@ jobs:
           echo "$filename" >> $GITHUB_STEP_SUMMARY
           echo "DAG=$filename" >> $GITHUB_ENV
 
-      - name: Check Last Version
+      - name: Check Last Version and increment
         run: |
           echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
           last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
@@ -53,7 +53,7 @@ jobs:
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patch=$(echo "$last_version" | cut -d'.' -f3)
 
-            kind_modification=$(git log--format=%s -n 1 "$GITHUB_SHA")
+            kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA")
 
             echo $kind_modification >> $GITHUB_STEP_SUMMARY
             
