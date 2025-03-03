@@ -3,7 +3,7 @@ name: Capture Tag Value
 on:
   push:
     tags:
-      - 'v_*.*.*'
+      - '*v_*.*.*'
       
 jobs:
   capture_tag:
