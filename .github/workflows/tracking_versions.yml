@@ -2,7 +2,10 @@ name: Capture Tag Value
 
 on:
   workflow_dispatch:
-      
+  push:
+    branches:
+      - dev
+
 jobs:
   capture_tag:
     runs-on: ubuntu-latest
@@ -20,23 +23,13 @@ jobs:
           dir_names: false
           files: dags/**/*.py
       
-      - name: List updated JSON Files
+      - name: Get name DAG modified
         id: json_files
         if: steps.changed-files.outputs.any_changed == 'true'
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
-          echo "${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-
-
-      - name: create dummy
-        env:
-          ALL_CHANGED_FILES: "dags/groups.py"
-        run: |
-          echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
-          filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+          file_changed=${{ steps.changed-files.outputs.all_changed_files }}
+          filename=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "$filename" >> $GITHUB_STEP_SUMMARY
-          
+
         
         
