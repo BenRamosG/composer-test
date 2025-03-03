@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 1 # Important for fetching tags
   
       - name: Get Changed files 
         id: changed-files
@@ -29,3 +27,4 @@ jobs:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ github.ref_name }} >> $GITHUB_STEP_SUMMARY
