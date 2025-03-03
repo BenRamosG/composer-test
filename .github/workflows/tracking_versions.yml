@@ -31,5 +31,12 @@ jobs:
           filename=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "$filename" >> $GITHUB_STEP_SUMMARY
 
-        
+      - name: create dummy
+        env:
+          ALL_CHANGED_FILES: "dags/groups.py"
+        run: |
+          echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
+          filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+          echo "$filename" >> $GITHUB_STEP_SUMMARY
+          echo "::set-output name=dag::$filename" # Define the output        
         
