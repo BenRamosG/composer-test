@@ -35,7 +35,7 @@ jobs:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
           echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
-          filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}')
+          filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "$filename" >> $GITHUB_STEP_SUMMARY
           
         
