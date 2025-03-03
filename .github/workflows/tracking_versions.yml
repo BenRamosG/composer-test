@@ -29,21 +29,17 @@ jobs:
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
           filename=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "$filename" >> $GITHUB_STEP_SUMMARY
           echo "DAG=$filename" >> $GITHUB_ENV
 
       - name: DUMMY - Get DAG name
         env:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
-          echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
           filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "$filename" >> $GITHUB_STEP_SUMMARY
           echo "DAG=$filename" >> $GITHUB_ENV
 
       - name: Check Last Version and increment
         run: |
-          echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
           last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
 
           if [ "$last_version" == "null" ]; then
@@ -53,14 +49,26 @@ jobs:
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patch=$(echo "$last_version" | cut -d'.' -f3)
 
-            kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA")
-
-            echo $kind_modification >> $GITHUB_STEP_SUMMARY
+            # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA")
+            kind_modification="Fix: blabla"
+            
+            case "$kind_modification" in
+              *fix*)
+                echo "Kind: Fix" >> $GITHUB_STEP_SUMMARY
+                
+                ;;
+              *enhance*)
+                echo "Kind: Enhancement" >> $GITHUB_STEP_SUMMARY
+                
+                ;;
+              *release*)
+                echo "Kind: Release" >> $GITHUB_STEP_SUMMARY
+                
+                ;;
+              *)
+                echo "Kind: Other or unknown" >> $GITHUB_STEP_SUMMARY
+                
+                ;;
+            esac
             
           fi
-
-          echo "The last version is: $last_version" >> $GITHUB_STEP_SUMMARY
-          
-
-
-          
