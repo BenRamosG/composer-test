@@ -38,5 +38,8 @@ jobs:
           echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
           filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "$filename" >> $GITHUB_STEP_SUMMARY
-          echo "::set-output name=dag::$filename" # Define the output        
-        
+          echo "DAG=$filename" >> $GITHUB_ENV
+
+      - name: Check Last Version
+        run: |
+          echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
