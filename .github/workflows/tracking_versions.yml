@@ -2,8 +2,8 @@ name: Capture Tag Value
 
 on:
   push:
-    branches:
-      - dev
+    tags:
+      - 'v_*.*.*'
       
 jobs:
   capture_tag:
