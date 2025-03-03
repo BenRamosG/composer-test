@@ -12,7 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-  
+        with:
+          fetch-depth: 0
+
       - name: Get Changed files 
         id: changed-files
         uses: tj-actions/changed-files@v44
