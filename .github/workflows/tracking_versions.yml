@@ -46,7 +46,7 @@ jobs:
           echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
           last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
 
-          if [ "$VERSION" == "null" ]; then
+          if [ "$last_version" == "null" ]; then
             last_version=0.0.1
           fi
           
