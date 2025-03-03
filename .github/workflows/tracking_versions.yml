@@ -1,7 +1,9 @@
 name: Capture Tag Value
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - dev
       
 jobs:
   capture_tag:
@@ -18,7 +20,7 @@ jobs:
         uses: tj-actions/changed-files@v44
         with:
           dir_names: false
-          files: dags/**
+          files: dags/**/*.py
       
       - name: List updated JSON Files
         id: json_files
