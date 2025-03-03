@@ -1,9 +1,8 @@
 name: Capture Tag Value
 
+	
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
       
 jobs:
   capture_tag:
@@ -30,3 +29,10 @@ jobs:
         run: |
           echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
           echo "${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: create dummy
+        env:
+          ALL_CHANGED_FILES: "dags/groups.py"
+        run: |
+          echo "${ALL_CHANGED_FILES}" >> $GITHUB_STEP_SUMMARY
+        
