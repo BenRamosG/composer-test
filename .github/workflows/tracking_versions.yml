@@ -30,6 +30,7 @@ jobs:
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
           filename=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "$filename" >> $GITHUB_STEP_SUMMARY
+          echo "DAG=$filename" >> $GITHUB_ENV
 
       - name: create dummy
         env:
@@ -43,3 +44,5 @@ jobs:
       - name: Check Last Version
         run: |
           echo ${{ env.DAG }} >> $GITHUB_STEP_SUMMARY
+          last_version=$(jq -r ".$VARIABLE_NAME" dags/version.json)
+          echo "The last version is: $last_version" >> $GITHUB_STEP_SUMMARY
