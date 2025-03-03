@@ -1,9 +1,7 @@
 name: Capture Tag Value
 
 on:
-  push:
-    tags:
-      - '*v_*.*.*'
+  workflow_dispatch:
       
 jobs:
   capture_tag:
