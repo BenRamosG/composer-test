@@ -49,8 +49,8 @@ jobs:
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patch=$(echo "$last_version" | cut -d'.' -f3)
 
-            # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA")
-            kind_modification=$(echo "Fix: blabla" | tr '[:upper:]' '[:lower:]')
+            kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
+            # kind_modification=$(echo "Fix: blabla" | tr '[:upper:]' '[:lower:]')
 
             echo "$kind_modification" >> $GITHUB_STEP_SUMMARY
             
