@@ -66,9 +66,9 @@ jobs:
                 ;;
               *release*)
                 echo "Kind: Release" >> $GITHUB_STEP_SUMMARY
-                # major=$((major + 1))
-                # minor=0
-                # patchfix=0
+                major=$((major + 1))
+                minor=0
+                patchfix=0
                 ;;
               *)
                 echo "Kind: Other or unknown" >> $GITHUB_STEP_SUMMARY 
