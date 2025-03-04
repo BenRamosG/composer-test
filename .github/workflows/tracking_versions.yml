@@ -89,7 +89,7 @@ jobs:
           dag_version="${{ steps.set-new-version.outputs.new_version }}"
           dag_file="${{ steps.get-change.outputs.dag_path }}"
 
-          python modify_dag_version.py "$dag_file" "$dag_version"
+          python modify_dag_version.py "$dag_file"
 
           echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
 
