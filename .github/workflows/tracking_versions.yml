@@ -93,5 +93,7 @@ jobs:
 
           echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
 
-          echo "cat $dag_path " >> $GITHUB_STEP_SUMMARY
+          data_content=$(cat $dag_path)
+
+          echo "$data_content " >> $GITHUB_STEP_SUMMARY
 
