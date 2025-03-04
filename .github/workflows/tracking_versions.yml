@@ -83,6 +83,7 @@ jobs:
           fi
 
           new="$major.$minor.$patchfix"
+          echo $new >> GITHUB_STEP_SUMMARY
           echo "new_version=$new" >> $GITHUB_OUTPUT
 
       - name: Update DAG Python file
