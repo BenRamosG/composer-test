@@ -91,9 +91,15 @@ jobs:
 
           python modify_dag_version.py "$dag_path" "$dag_version"
 
-          echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
-
           data_content=$(cat $dag_path)
 
           echo "$data_content " >> $GITHUB_STEP_SUMMARY
 
+      - name: Update Dags Last Versions
+        run: |
+          json_file="dags/dags_versions.json"
+          jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
+
+          json_content=$(cat $json_file)
+
+          echo "$json_content " >> $GITHUB_STEP_SUMMARY
