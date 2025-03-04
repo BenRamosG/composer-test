@@ -95,4 +95,6 @@ jobs:
 
 
       - name: Check Git Status
-        run: git status
+        run: |
+          git add $dag_file
+          git commit -m "Change version"
