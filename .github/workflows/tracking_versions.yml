@@ -36,7 +36,7 @@ jobs:
       - name: Check Last Version and increment
         id: set-new-version
         run: |
-          last_version=$(jq -r ".${{ steps.get-change.outputs.dag }}" dags/dags_versions.json)
+          last_version=$(jq -r ".${{ steps.get-change2.outputs.dag }}" dags/dags_versions.json)
 
           if [ "$last_version" == "null" ]; then
             last_version=1.0.0
