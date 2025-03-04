@@ -28,15 +28,20 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
-          filename=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "DAG=$filename" >> $GITHUB_ENV
+          file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+          echo "DAG=$file_name" >> $GITHUB_ENV
+          echo "DAG_PATH=$file_changed" >> $GITHUB_ENV
 
       - name: DUMMY - Get DAG name
         env:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
-          filename=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "DAG=$filename" >> $GITHUB_ENV
+          file_changed="${ALL_CHANGED_FILES}"
+          file_name=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+          echo "DAG=$file_name" >> $GITHUB_ENV
+          echo "DAG_PATH=$file_changed" >> $GITHUB_ENV
+
+          echo "$file_changed-$file_name" >> $GITHUB_STEP_SUMMARY 
 
       - name: Check Last Version and increment
         run: |
