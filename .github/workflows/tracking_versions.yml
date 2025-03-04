@@ -54,7 +54,7 @@ jobs:
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patchfix=$(echo "$last_version" | cut -d'.' -f3)
 
-            echo "$major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
+            echo "Current version: $major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
 
             # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
             kind_modification=$(echo "Release: blabla" | tr '[:upper:]' '[:lower:]')
@@ -88,16 +88,8 @@ jobs:
         run: |
           dag_version="${{ steps.set-new-version.outputs.new_version }}"
           dag_file="${{ steps.get-change.outputs.dag_path }}"
-          
-          if [ ! -f "$dag_file" ]; then
-            echo "Error: Python file not found at $dag_file"
-            exit 1
-          fi
 
-          python -c "
-          import sys, re
+          echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
 
-          "
+          python modify_dag_version.py "$dag_file" "$dag_version"
 
-        
-          
