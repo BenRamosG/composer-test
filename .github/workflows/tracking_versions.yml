@@ -89,8 +89,10 @@ jobs:
           dag_version="${{ steps.set-new-version.outputs.new_version }}"
           dag_file="${{ steps.get-change.outputs.dag_path }}"
           
-          echo "S: $dag_file" >> "$GITHUB_STEP_SUMMARY" 
-          echo "S: $dag_version" >> "$GITHUB_STEP_SUMMARY" 
+          if [ ! -f "$dag_file" ]; then
+            echo "Error: Python file not found at $dag_file"
+            exit 1
+          fi
 
         
           
