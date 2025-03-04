@@ -33,20 +33,20 @@ jobs:
           echo "DAG_PATH=$file_changed" >> $GITHUB_ENV
 
       - name: DUMMY - Get DAG name
+        id: get_change
         env:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
           file_changed="${ALL_CHANGED_FILES}"
           file_name=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "DAG=$file_name" >> $GITHUB_ENV
-          echo "DAG_PATH=$file_changed" >> $GITHUB_ENV
-
-          echo "$file_changed-$file_name" >> $GITHUB_STEP_SUMMARY 
+          echo "dag=$file_name" >> $GITHUB_OUTPUT
+          echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
+          
 
       - name: Check Last Version and increment
         id: set_new_version
         run: |
-          last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
+          last_version=$(jq -r ".${{ steps.get_change.outputs.dag }}" dags/dags_versions.json)
 
           if [ "$last_version" == "null" ]; then
             last_version=1.0.0
