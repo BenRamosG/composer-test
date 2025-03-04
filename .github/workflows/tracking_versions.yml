@@ -44,6 +44,7 @@ jobs:
           echo "$file_changed-$file_name" >> $GITHUB_STEP_SUMMARY 
 
       - name: Check Last Version and increment
+        id: new_version
         run: |
           last_version=$(jq -r ".${{ env.DAG }}" dags/dags_versions.json)
 
@@ -81,11 +82,10 @@ jobs:
             esac
           fi
 
-          echo "$major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
-          echo "NEW_VERSION=$major.$minor.$patchfix" >> $GITHUB_ENV
+          echo "new_version=$major.$minor.$patchfix" >> $GITHUB_OUTPUT
 
       - name: Update DAG Python file
         run: |
-          echo "${{ env.NEW_VERSION }}" >> GITHUB_STEP_SUMMARY
+          echo "${{ steps.new_version.new_version }}" >> GITHUB_STEP_SUMMARY
         
           
