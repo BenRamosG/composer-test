@@ -84,17 +84,14 @@ jobs:
           new="$major.$minor.$patchfix"
           echo "new_version=$new" >> $GITHUB_OUTPUT
 
-      - name: Update DAG Python file
+      - name: Update DAG Python File
         run: |
           dag_version="${{ steps.set-new-version.outputs.new_version }}"
-          dag_file="${{ steps.get-change.outputs.dag_path }}"
+          dag_path="${{ steps.get-change.outputs.dag_path }}"
 
-          python modify_dag_version.py "$dag_file" "$dag_version"
+          python modify_dag_version.py "$dag_path" "$dag_version"
 
           echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
 
+          echo "cat $dag_path " >> $GITHUB_STEP_SUMMARY
 
-      - name: Check Git Status
-        run: |
-          git add .
-          git commit -m "Change version"
