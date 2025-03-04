@@ -86,6 +86,6 @@ jobs:
 
       - name: Update DAG Python file
         run: |
-          echo "${{ env.DAG }}" >> GITHUB_STEP_SUMMARY
+          echo "${{ env.NEW_VERSION }}" >> GITHUB_STEP_SUMMARY
         
           
