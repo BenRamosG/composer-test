@@ -86,7 +86,11 @@ jobs:
 
       - name: Update DAG Python file
         run: |
-          echo "${{ steps.set-new-version.outputs.new_version }}" >> "$GITHUB_STEP_SUMMARY" 
+          dag_version="${{ steps.set-new-version.outputs.new_version }}"
+          dag_file="${{ steps.set-new-version.outputs.dag_path }}"
+          
+          echo "$dag_file" >> "$GITHUB_STEP_SUMMARY" 
+          echo "$dag_version" >> "$GITHUB_STEP_SUMMARY" 
 
         
           
