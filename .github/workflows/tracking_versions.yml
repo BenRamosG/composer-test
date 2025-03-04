@@ -83,11 +83,11 @@ jobs:
           fi
 
           new="$major.$minor.$patchfix"
-          echo "$new" >> "$GITHUB_STEP_SUMMARY"
           echo "new_version=$new" >> $GITHUB_OUTPUT
 
       - name: Update DAG Python file
         run: |
-          echo "${{ steps.set_new_version.outputs.new_version }}" >> GITHUB_STEP_SUMMARY
+          echo "${{ steps.set_new_version.outputs.new_version }}" >> "$GITHUB_STEP_SUMMARY" 
+
         
           
