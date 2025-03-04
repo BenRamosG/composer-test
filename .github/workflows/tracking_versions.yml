@@ -82,5 +82,10 @@ jobs:
           fi
 
           echo "$major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
+          echo "NEW_VERSION="$major.$minor.$patchfix" >> $GITHUB_ENV
 
+      - name: Update DAG Python file
+        run: |
+          echo "${{ env.DAG }}" >> GITHUB_STEP_SUMMARY
+        
           
