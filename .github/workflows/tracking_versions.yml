@@ -93,3 +93,6 @@ jobs:
 
           echo "New version: $dag_version" >> $GITHUB_STEP_SUMMARY
 
+
+      - name: Check Git Status
+        run: git status
