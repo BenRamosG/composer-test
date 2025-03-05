@@ -41,7 +41,7 @@ jobs:
 
       - name: DUMMY - Get DAG name
         id: get-change
-        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION'))
+        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
         env:
           ALL_CHANGED_FILES: "dags/groups.py"
         run: |
@@ -51,8 +51,27 @@ jobs:
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
           echo " Entro 2" >> $GITHUB_STEP_SUMMARY
 
+      - name: Create Example File
+        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
+        run: echo "Hello from GitHub Actions! $(date)" > example.txt
 
-      - name: test
+      - name: Configure Git User
+        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
         run: |
-          echo " ${{ steps.get-message.outputs.comm_message }} " >> $GITHUB_STEP_SUMMARY
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Commit files
+        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "GITHUB-ACTION: Update version DAG"
+
+      - name: Push changes
+        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
           
