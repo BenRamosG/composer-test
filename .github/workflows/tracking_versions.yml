@@ -58,7 +58,7 @@ jobs:
           last_version=$(jq -r ".${{ steps.get-change.outputs.dag }}" dags/dags_versions.json)
 
           if [ "$last_version" == "null" ]; then
-            last_version=1.0.0
+            new=1.0.0
           else
             major=$(echo "$last_version" | cut -d'.' -f1)
             minor=$(echo "$last_version" | cut -d'.' -f2)
@@ -89,9 +89,11 @@ jobs:
                 echo "Kind: Other or unknown" >> $GITHUB_STEP_SUMMARY 
                 ;;
             esac
+            
+            new="$major.$minor.$patchfix"
+          
           fi
 
-          new="$major.$minor.$patchfix"
           echo "new_version=$new" >> $GITHUB_OUTPUT
 
       - name: Update DAG Python File
@@ -110,27 +112,17 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
         run: |
           json_file="dags/dags_versions.json"
-          jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
+          dag_key=${{ steps.get-change.outputs.dag }}
 
-          json_content=$(cat $json_file)
+          if jq "has(\"$dag_key\")" "$json_file" > /dev/null; then
+            echo " Si existe" >> $GITHUB_STEP_SUMMARY
+          else
+            echo " No existe" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          
+          # jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
+          # json_content=$(cat $json_file)
+          # echo "$json_content " >> $GITHUB_STEP_SUMMARY
 
-          echo "$json_content " >> $GITHUB_STEP_SUMMARY
-
-      - name: Configure Git User
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-      - name: Commit files
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
-        run: |
-          git add .
-          git commit -m "GITHUB-ACTION: Update version DAG"
-
-      - name: Push changes
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+  
