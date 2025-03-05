@@ -49,3 +49,7 @@ jobs:
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
 
+      - name: test
+        run: |
+          echo " ${{ steps.get-message.outputs.comm_message }} " >> $GITHUB_STEP_SUMMARY
+          
