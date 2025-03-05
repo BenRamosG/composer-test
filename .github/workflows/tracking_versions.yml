@@ -118,4 +118,4 @@ jobs:
 
       - name: Files updated
         run: |
-          echo " git status " >>  $GITHUB_STEP_SUMMARY
+          git status >>  $GITHUB_STEP_SUMMARY
