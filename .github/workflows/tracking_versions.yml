@@ -78,8 +78,8 @@ jobs:
 
             echo "Current version: $major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
 
-            # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
-            kind_modification=$(echo "ENHANCE: blabla" | tr '[:upper:]' '[:lower:]')
+            kind_modification="${{ steps.get-message.outputs.comm_message }}"
+            # kind_modification=$(echo "ENHANCE: blabla" | tr '[:upper:]' '[:lower:]')
           
             case "$kind_modification" in
               *fix*)
