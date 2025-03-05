@@ -55,12 +55,6 @@ jobs:
         if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
         run: echo "Hello from GitHub Actions! $(date)" > example.txt
 
-      - name: Configure Git User
-        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-
       - name: Commit files
         if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
         run: |
