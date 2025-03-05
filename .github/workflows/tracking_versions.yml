@@ -51,9 +51,18 @@ jobs:
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
           echo " Entro 2" >> $GITHUB_STEP_SUMMARY
 
+      - name: Checkout code2
+        uses: actions/checkout@v4.2.2
+
       - name: Create Example File
         if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
         run: echo "Hello from GitHub Actions! $(date)" > example.txt
+
+      - name: Configure Git User
+        if: (!startsWith(steps.get-message.outputs.comm_message, 'GITHUB-ACTION:'))
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
 
       - name: Commit files
         if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
