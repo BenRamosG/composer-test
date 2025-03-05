@@ -34,7 +34,7 @@ jobs:
       
       - name: Get DAG name
         id: get-change2
-        if: steps.changed-files.outputs.any_changed == 'true' && !startsWith(steps.get-message.outputs.comm_message, 'GITHUB-ACTION:')
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
           file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
@@ -51,34 +51,71 @@ jobs:
           file_name=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
+
+
+ 
+      - name: Check Last Version and increment
+        id: set-new-version
+        run: |
+          last_version=$(jq -r ".${{ steps.get-change.outputs.dag }}" dags/dags_versions.json)
+
+          if [ "$last_version" == "null" ]; then
+            last_version=1.0.0
+          else
+            major=$(echo "$last_version" | cut -d'.' -f1)
+            minor=$(echo "$last_version" | cut -d'.' -f2)
+            patchfix=$(echo "$last_version" | cut -d'.' -f3)
+
+            echo "Current version: $major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
+
+            # kind_modification=$(git log --format=%s -n 1 "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')
+            kind_modification=$(echo "Release: blabla" | tr '[:upper:]' '[:lower:]')
           
+            case "$kind_modification" in
+              *fix*)
+                echo "Kind: Fix" >> $GITHUB_STEP_SUMMARY
+                patchfix=$((patchfix + 1))
+                ;;
+              *enhance*)
+                echo "Kind: Enhancement" >> $GITHUB_STEP_SUMMARY
+                minor=$((minor + 1))
+                patchfix=0
+                ;;
+              *release*)
+                echo "Kind: Release" >> $GITHUB_STEP_SUMMARY
+                major=$((major + 1))
+                minor=0
+                patchfix=0
+                ;;
+              *)
+                echo "Kind: Other or unknown" >> $GITHUB_STEP_SUMMARY 
+                ;;
+            esac
+          fi
 
-      - name: Checkout code2
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
+          new="$major.$minor.$patchfix"
+          echo "new_version=$new" >> $GITHUB_OUTPUT
 
-      - name: Create Example File
-        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
-        run: echo "Hello from GitHub Actions! $(date)" > example.txt
-
-      - name: Configure Git User
-        if: (!startsWith(steps.get-message.outputs.comm_message, 'GITHUB-ACTION:'))
+      - name: Update DAG Python File
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          dag_version="${{ steps.set-new-version.outputs.new_version }}"
+          dag_path="${{ steps.get-change.outputs.dag_path }}"
 
-      - name: Commit files
-        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
+          python modify_dag_version.py "$dag_path" "$dag_version"
+
+          data_content=$(cat $dag_path)
+
+          echo "$data_content " >> $GITHUB_STEP_SUMMARY
+
+      - name: Update Dags Last Versions
         run: |
-          git add .
-          git commit -m "GITHUB-ACTION: Update version DAG"
+          json_file="dags/dags_versions.json"
+          jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
 
-      - name: Push changes
-        if: (!startsWith(steps.get-message.outputs.comm_message,'GITHUB-ACTION:'))
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
+          json_content=$(cat $json_file)
 
-   
+          echo "$json_content " >> $GITHUB_STEP_SUMMARY
+
+      - name: Files updated
+        run: |
+          echo " git status " >>  $GITHUB_STEP_SUMMARY
