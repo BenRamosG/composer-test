@@ -43,25 +43,13 @@ jobs:
           files: dags/**/*.py
       
       - name: Get DAG name
-        id: get-change2
+        id: get-change
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
           file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
-
-      - name: DUMMY - Get DAG name
-        id: get-change
-        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
-        env:
-          ALL_CHANGED_FILES: "dags/groups.py"
-        run: |
-          file_changed="${ALL_CHANGED_FILES}"
-          file_name=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          echo "dag=$file_name" >> $GITHUB_OUTPUT
-          echo "dag_path=$file_changed" >> $GITHUB_OUTPUT        
-
 
       - name: Check Last Version and increment
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
