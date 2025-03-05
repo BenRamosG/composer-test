@@ -37,6 +37,7 @@ jobs:
           file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
+          echo " Entro 1" >> $GITHUB_STEP_SUMMARY
 
       - name: DUMMY - Get DAG name
         id: get-change
@@ -48,6 +49,8 @@ jobs:
           file_name=$(echo "${ALL_CHANGED_FILES}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
+          echo " Entro 2" >> $GITHUB_STEP_SUMMARY
+
 
       - name: test
         run: |
