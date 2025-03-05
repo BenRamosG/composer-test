@@ -28,7 +28,8 @@ jobs:
       - name: Set Condition
         id: set-condition
         run: |
-          if [[ "${{ steps.get-message.outputs.comm_message }}" == GITHUB-ACTION:* ]]; then
+          echo "A{{ steps.get-message.outputs.comm_message }}A" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.get-message.outputs.comm_message }}" == *GITHUB-ACTION:* ]]; then
             echo "skip_action=true" >> $GITHUB_OUTPUT
             echo "Skip steps" >> $GITHUB_STEP_SUMMARY
           else
