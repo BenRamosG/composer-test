@@ -98,20 +98,72 @@ jobs:
           echo "New version: $new" >> $GITHUB_STEP_SUMMARY
           echo "new_version=$new" >> $GITHUB_OUTPUT
           
-
       - name: Update DAG Python File
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
         run: |
           dag_version="${{ steps.set-new-version.outputs.new_version }}"
           dag_path="${{ steps.get-change.outputs.dag_path }}"
 
-          echo "$dag_version " >> $GITHUB_STEP_SUMMARY
-          echo "$dag_path " >> $GITHUB_STEP_SUMMARY
-
-
           python modify_dag_version.py "$dag_path" "$dag_version"
 
           data_content=$(cat $dag_path)
 
           echo "$data_content " >> $GITHUB_STEP_SUMMARY
+
+      - name: Update Dags Last Versions
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
+        run: |
+          json_file="dags/dags_versions.json"
+          dag_key=${{ steps.get-change.outputs.dag }}
+          new_version=${{ steps.set-new-version.outputs.new_version }}
+
+          jq_filter="has(\"$dag_key\")"
+          key=$(jq $jq_filter $json_file)
+
+          if [[ $key  = "true" ]]; then
+            jq ".${{ steps.get-change.outputs.dag }} = \"$new_version\"" "$json_file" > temp.json && mv temp.json "$json_file"
+          else
+            jq --arg key "$dag_key" --arg value "$new_version" '. + { ($key): $value }' "$json_file" > temp.json && mv temp.json "$json_file"
+          fi         
+          
+          # jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
+          json_content=$(cat $json_file)
+          echo "$json_content " >> $GITHUB_STEP_SUMMARY
+
+      - name: Configure Git User
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+      - name: Commit files
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
+        run: |
+          tag_name="${{ steps.get-change.outputs.dag }}_${{ steps.set-new-version.outputs.new_version }}"
+          git tag -a "$tag_name" -m "Automated tag"
+          git add .
+          git commit -m "GITHUB-ACTION: Update version DAG"
+
+      - name: Push changes
+        if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
+          tags: true
+
+      - id: auth
+        name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+      - name: Copy DAG final versions
+        shell: bash
+        run: gcloud storage cp dags/dags_versions.json gs://telus-sources-bq/
 
