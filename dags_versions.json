@@ -2,5 +2,6 @@
   "groups": "4.0.4",
   "customers": "1.1.4",
   "departments": "1.0.0",
-  "test": "2.0.0"
+  "test": "2.0.0",
+  "users": "1.0.0"
 }
