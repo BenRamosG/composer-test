@@ -164,6 +164,7 @@ jobs:
       - name: set credentials file
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
-      - name: Read buckets
+      - name: Copy DAG final versions
         shell: bash
-        run: gsutil ls >> $GITHUB_STEP_SUMMARY
+        run: gcloud storage cp dags/dags_versions.json gs://telus-sources-bq/
+
