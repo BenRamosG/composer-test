@@ -57,15 +57,15 @@ jobs:
         run: |
           last_version=$(jq -r ".${{ steps.get-change.outputs.dag }}" dags/dags_versions.json)
 
+          echo "Current version: $last_version" >> $GITHUB_STEP_SUMMARY
+
           if [ "$last_version" == "null" ]; then
             new=1.0.0
           else
             major=$(echo "$last_version" | cut -d'.' -f1)
             minor=$(echo "$last_version" | cut -d'.' -f2)
             patchfix=$(echo "$last_version" | cut -d'.' -f3)
-
-            echo "Current version: $major.$minor.$patchfix" >> $GITHUB_STEP_SUMMARY
-
+            
             kind_modification="${{ steps.get-message.outputs.comm_message }}"
             # kind_modification=$(echo "ENHANCE: blabla" | tr '[:upper:]' '[:lower:]')
           
@@ -94,7 +94,9 @@ jobs:
           
           fi
 
+          echo "New version: $new" >> $GITHUB_STEP_SUMMARY
           echo "new_version=$new" >> $GITHUB_OUTPUT
+          
 
       - name: Update DAG Python File
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
@@ -113,16 +115,19 @@ jobs:
         run: |
           json_file="dags/dags_versions.json"
           dag_key=${{ steps.get-change.outputs.dag }}
+          new_version=${{ steps.set-new-version.outputs.new_version }}
 
-          if jq "has(\"$dag_key\")" "$json_file" > /dev/null; then
-            echo " Si existe" >> $GITHUB_STEP_SUMMARY
+          jq_filter="has(\"$dag_key\")"
+          key=$(jq $jq_filter $json_file)
+
+          if [[ $key  = "true" ]]; then
+            jq ".${{ steps.get-change.outputs.dag }} = \"$new_version\"" "$json_file" > temp.json && mv temp.json "$json_file"
           else
-            echo " No existe" >> $GITHUB_STEP_SUMMARY
-          fi
-          
+            jq --arg key "$dag_key" --arg value "$new_version" '. + { ($key): $value }' "$json_file" > temp.json && mv temp.json "$json_file"
+          fi         
           
           # jq ".${{ steps.get-change.outputs.dag }} = \"${{ steps.set-new-version.outputs.new_version }}\"" "$json_file" > temp.json && mv temp.json "$json_file"
-          # json_content=$(cat $json_file)
-          # echo "$json_content " >> $GITHUB_STEP_SUMMARY
+          json_content=$(cat $json_file)
+          echo "$json_content " >> $GITHUB_STEP_SUMMARY
 
   
