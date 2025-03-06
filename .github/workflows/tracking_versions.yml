@@ -152,3 +152,17 @@ jobs:
           branch: ${{ github.ref_name }}
           tags: true
 
+      - id: auth
+        name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+      - name: Read buckets
+        shell: bash
+        run: gsutil ls >> $GITHUB_STEP_SUMMARY
