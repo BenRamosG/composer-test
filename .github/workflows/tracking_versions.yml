@@ -135,10 +135,12 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-
+          
       - name: Commit files
         if: steps.changed-files.outputs.any_changed == 'true' && steps.set-condition.outputs.skip_action == 'false'
         run: |
+          tag_name="${{ steps.get-change.outputs.dag }}_${{ steps.set-new-version.outputs.new_version }}"
+          git tag -a "$tag_name" -m "Automated tag"
           git add .
           git commit -m "GITHUB-ACTION: Update version DAG"
 
@@ -148,4 +150,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref_name }}
+          tags: true
 
