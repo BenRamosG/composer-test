@@ -49,7 +49,7 @@ jobs:
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
           file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-          file_last_versions="dags/dags_versions.json"
+          file_last_versions="dags_versions.json"
           echo "dag=$file_name" >> $GITHUB_OUTPUT
           echo "dag_path=$file_changed" >> $GITHUB_OUTPUT
           echo "file_version=$file_last_versions" >> $GITHUB_OUTPUT
