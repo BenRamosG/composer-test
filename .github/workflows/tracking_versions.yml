@@ -41,7 +41,7 @@ jobs:
         uses: tj-actions/changed-files@v44
         with:
           dir_names: false
-          files: dags/**/*.py
+          files: composer/**/dags/**/*.py
       
       - name: Get DAG name
         id: get-change
