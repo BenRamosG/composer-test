@@ -5,6 +5,8 @@ on:
   
 jobs:
   count_python_files:
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
 
     steps:
