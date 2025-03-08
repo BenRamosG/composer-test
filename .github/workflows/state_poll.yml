@@ -27,4 +27,9 @@ jobs:
         run: |
           find composer/*/dags/ -name '*.py' > dag_files.txt
           cat dag_files.txt
+
+      - name: Count Python Files
+        run: |
+          file_count=$(wc -l < dag_files.txt)
+          echo "Total number of Python files found: $file_count"
           
