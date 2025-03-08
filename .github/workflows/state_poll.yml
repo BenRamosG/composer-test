@@ -23,9 +23,9 @@ jobs:
           list_files=$(cat dag_files.txt | tr '\n' ' ')
           
           for file in $list_files; do
-            file_name=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            echo $file_name
-
+            folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+            echo gsutil cp "${file}" gs://blablabla/dags/${folder}/dags/" 
+            
           done
           
           
