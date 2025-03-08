@@ -31,7 +31,7 @@ jobs:
           cat dag_files.txt
           file_count=$(wc -l < dag_files.txt)
           echo "Total number of Python files found: $file_count"
-          echo "total_dag_deployed=$file_count" >> $GITHUB_OUTPUT
+          echo "total_deployed=$file_count" >> $GITHUB_OUTPUT
 
       - name: Copy DAGs into GCP
         run: |
@@ -44,7 +44,17 @@ jobs:
 
       - name: Check DAGs Composer
         run: |
-          composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
-          echo "Count Composer's Dags $composer_dags"
+          while true; do
+            deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
+            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
+          
+            if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
+              echo "DAG counts differ. Retrying in 1 minute..."
+              sleep 60  # Wait for 1 minute (60 seconds)
+            else
+              echo "DAG counts match. Exiting."
+              break  # Exit the loop when counts are equal
+            fi
+          done
           
           
