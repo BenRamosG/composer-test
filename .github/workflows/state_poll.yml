@@ -18,6 +18,7 @@ jobs:
             dir=$(dirname "$file")
             count=$(find "$dir" -name '*.py' | wc -l)
             echo "Number of Python files in $dir: $count"
+            echo $(( count + 1 ))
             total_count=$(( total_count + count ))
           done
           echo "Total number of Python files in all dags folders: $total_count"
