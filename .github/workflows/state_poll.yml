@@ -11,10 +11,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Count Python Files in DAGs Folders
+      - name: Count Python Files in DAGs Folders and Total
         run: |
+          total_count=0
           find composer/*/dags/ -name '*.py' | while read -r file; do
             dir=$(dirname "$file")
             count=$(find "$dir" -name '*.py' | wc -l)
             echo "Number of Python files in $dir: $count"
+            total_count=$((total_count + count))
           done
+          echo "Total number of Python files in all dags folders: $total_count"
+
