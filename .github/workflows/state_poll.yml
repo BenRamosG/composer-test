@@ -1,0 +1,20 @@
+name: Count Python Files in DAGs
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  count_python_files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Count Python Files in DAGs Folders
+        run: |
+          find composer/*/dags/ -name '*.py' | while read -r file; do
+            dir=$(dirname "$file")
+            count=$(find "$dir" -name '*.py' | wc -l)
+            echo "Number of Python files in $dir: $count"
+          done
