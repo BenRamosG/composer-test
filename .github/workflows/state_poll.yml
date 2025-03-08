@@ -33,7 +33,7 @@ jobs:
           echo "Total number of Python files found: $file_count"
           echo "total_dag_deployed=$file_count" >> $GITHUB_OUTPUT
 
-      - name: copy files
+      - name: Copy DAGs into GCP
         run: |
           list_files=$(cat dag_files.txt | tr '\n' ' ')
           
@@ -41,5 +41,10 @@ jobs:
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
             gsutil cp "${file}" "gs://us-central1-instance-1833cf5d-bucket/dags/${folder}/dags/" 
           done
+
+      - name: Check DAGs Composer
+        run: |
+          composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
+          echo "Count Composer's Dags $composer_dags"
           
           
