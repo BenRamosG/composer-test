@@ -16,7 +16,7 @@ jobs:
           total_count=0
           find composer/*/dags/ -name '*.py' | while read -r file; do
             dir=$(dirname "$file")
-            count=$(find "$dir" -name '*.py' | wc -l)
+            count=$(find "$dir" -name '*.py' | wc -l | tr -d ' ') 
             echo "Number of Python files in $dir: $count"
             total_count=$(( total_count + count ))
           done
