@@ -15,14 +15,17 @@ jobs:
         run: |
           find composer/*/dags/ -name '*.py' > dag_files.txt
           cat dag_files.txt
-
-      - name: Count Python Files
-        run: |
           file_count=$(wc -l < dag_files.txt)
           echo "Total number of Python files found: $file_count"
 
       - name: copy files
         run: |
           list_files=$(cat dag_files.txt | tr '\n' ' ')
-          echo $list_files
+          
+          for file in $list_files; do
+            file_name=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+            echo $file_name
+
+          done
+          
           
