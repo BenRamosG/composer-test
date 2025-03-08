@@ -22,3 +22,9 @@ jobs:
           done < <(find composer/*/dags/ -name '*.py')
           echo "$total_count"
 
+
+      - name: Files founded
+        run: |
+          find composer/*/dags/ -name '*.py' > dag_files.txt
+          cat dag_files.txt
+          
