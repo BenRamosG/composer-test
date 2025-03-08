@@ -11,12 +11,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - id: auth
+        name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
       - name: Files founded
+        id: files-founded
         run: |
           find composer/*/dags/ -name '*.py' > dag_files.txt
           cat dag_files.txt
           file_count=$(wc -l < dag_files.txt)
           echo "Total number of Python files found: $file_count"
+          echo "total_dag_deployed=$file_count" >> $GITHUB_OUTPUT
 
       - name: copy files
         run: |
@@ -24,8 +37,7 @@ jobs:
           
           for file in $list_files; do
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            echo gsutil cp "${file}" "gs://blablabla/dags/${folder}/dags/" 
-            
+            gsutil cp "${file}" "gs://us-central1-instance-1833cf5d-bucket/dags/${folder}/dags/" 
           done
           
           
