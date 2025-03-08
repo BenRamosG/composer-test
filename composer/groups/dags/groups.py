@@ -14,7 +14,8 @@ import os
 dag_version = "4.0.6"
 
 args = {
-     'retries': 3
+     'retries': 3,
+     'owner': "groups"
 }
 
 
