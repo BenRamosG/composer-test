@@ -14,12 +14,11 @@ jobs:
       - name: Count Python Files in DAGs Folders and Total
         run: |
           total_count=0
-          find composer/*/dags/ -name '*.py' | while read -r file; do
+          while read -r file; do
             dir=$(dirname "$file")
-            count=$(find "$dir" -name '*.py' | wc -l | tr -d ' ') 
+            count=$(find "$dir" -name '*.py' | wc -l | tr -d ' ')
             echo "Number of Python files in $dir: $count"
             total_count=$(( total_count + count ))
-          done
+          done < <(find composer/*/dags/ -name '*.py')
           echo "$total_count"
-
 
