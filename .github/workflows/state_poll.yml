@@ -24,7 +24,7 @@ jobs:
           
           for file in $list_files; do
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            echo gsutil cp "${file}" gs://blablabla/dags/${folder}/dags/" 
+            echo gsutil cp "${file}" "gs://blablabla/dags/${folder}/dags/" 
             
           done
           
