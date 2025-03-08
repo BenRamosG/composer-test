@@ -16,7 +16,7 @@ dag_version = "1.1.4"
 
 args = {
      'retries': 3,
-     'owner': "customers'
+     'owner': "customers"
 }
 
 
