@@ -47,12 +47,12 @@ jobs:
           while true; do
             deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
             composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
-          
+            
             if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
               echo "DAG counts differ. Retrying in 1 minute..."
-              sleep 60  # Wait for 1 minute (60 seconds)
               errors=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>/dev/null)
-
+              sleep 60  # Wait for 1 minute (60 seconds)
+              
               if [[ -z "$errors" ]]; then
                 echo "No import errors found. Continuing loop."
                 continue # Skip to the next iteration of the loop
@@ -62,11 +62,9 @@ jobs:
                 echo "Send error ...."
                 break
               fi
-                            
+                          
             else
               echo "DAG counts match. Exiting."
               break  # Exit the loop when counts are equal
             fi
           done
-          
-          
