@@ -52,7 +52,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed
         run: |
           file_changed=${{ steps.changed-files.outputs.all_changed_files }}
-          file_name=$(echo "${dag_path}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
+          file_name=$(echo "${file_changed}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           dag_version=$(python get_dag_version.py "$file_changed" "dag_version")
           new_version="${file_name}_${dag_version}"
           
