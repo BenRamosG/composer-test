@@ -48,11 +48,22 @@ jobs:
           files: composer/**/dags/**/*.py
 
       - name: Get Version
+        id: get-change
         if: steps.changed-files.outputs.any_changed
         run: |
-          dag_path=${{ steps.changed-files.outputs.all_changed_files }}
+          file_changed=${{ steps.changed-files.outputs.all_changed_files }}
+          file_name=$(echo "${dag_path}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
           dag_version=$(python get_dag_version.py "$dag_path" "dag_version")
+          new_version="$file_name_$dag_version"
+          
+          echo "dag_change=$file_changed" >> $GITHUB_OUTPUT
+          echo "dag_version=$new_version" >> $GITHUB_OUTPUT
 
-          echo "$dag_version"
+      - name: Print
+        if: steps.changed-files.outputs.any_changed
+        run: |
+          echo "${{ steps.get-change.outputs.dag_version }}
+
+
           
    
