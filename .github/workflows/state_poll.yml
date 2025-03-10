@@ -51,7 +51,7 @@ jobs:
           composer-location: ${{ needs.review.outputs.region }}
         run: |
           POLL_PERIOD=60 # Poll every minute
-          WHILE_TIMEOUT=60*15 # 15 minutes
+          WHILE_TIMEOUT=$((60*15)) # 15 minutes
           ELAPSED=0 # Runtime
 
           while true; do
