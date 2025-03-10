@@ -52,7 +52,7 @@ jobs:
           
           for file in $list_files; do
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            gsutil cp "${file}" "${{ github.event.inputs.composer_gcs_bucket }}/dags/${folder}/dags/" 
+            gsutil cp "${file}" "gs://${{ github.event.inputs.composer_gcs_bucket }}/dags/${folder}/dags/" 
           done
 
       - name: Check DAGs Composer
