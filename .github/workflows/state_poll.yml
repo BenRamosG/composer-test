@@ -52,7 +52,7 @@ jobs:
         run: |
           while true; do
             deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
-            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
+            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"])] | length')
             
             if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
               echo "DAG counts differ. Retrying in 1 minute..."
