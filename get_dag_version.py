@@ -14,8 +14,7 @@ def get_dag_version(file_path, variable_name):
             if match:
                 return match.group(1)
             else:
-                print(2)
-                return None  # Variable not found
+                return None
 
     except FileNotFoundError:
         print(f"Error: File not found at {file_path}")
