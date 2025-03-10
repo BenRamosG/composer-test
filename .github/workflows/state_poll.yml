@@ -34,23 +34,29 @@ jobs:
           echo "total_deployed=$file_count" >> $GITHUB_OUTPUT
 
       - name: Copy DAGs into GCP
+        with:
+          composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
         run: |
           list_files=$(cat dag_files.txt | tr '\n' ' ')
           
           for file in $list_files; do
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            gsutil cp "${file}" "gs://us-central1-instance-1833cf5d-bucket/dags/${folder}/dags/" 
+            gsutil cp "${file}" "${{ needs.review.outputs.composer_gcs_bucket }}/dags/${folder}/dags/" 
           done
 
       - name: Check DAGs Composer
+        with:
+          composer-environment-name: ${{ needs.review.outputs.composer_environment_name }}
+          composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
+          composer-location: ${{ needs.review.outputs.region }}
         run: |
           while true; do
             deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
-            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
+            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"] and .is_paused == "False")] | length')
             
             if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
               echo "DAG counts differ. Retrying in 1 minute..."
-              errors=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>/dev/null)
+              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json 2>/dev/null)
               sleep 60  # Wait for 1 minute (60 seconds)
               
               if [[ -z "$errors" ]]; then
