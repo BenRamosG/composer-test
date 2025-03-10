@@ -2,7 +2,20 @@ name: Count Python Files in DAGs
 
 on:
   workflow_dispatch:
-  
+    inputs:
+      composer-gcs-bucket:
+        description: "Bucket Composer environment"
+        required: true
+        default: "us-central1-instance-1833cf5d-bucket"
+      composer-environment-name:
+        description: "Name of Composer environment"
+        required: true
+        default: "instance"
+      composer-location:
+        description: "Name of Composer environment"
+        required: true
+        default: "us-central1"
+        
 jobs:
   count_python_files:
     permissions:
@@ -34,21 +47,15 @@ jobs:
           echo "total_deployed=$file_count" >> $GITHUB_OUTPUT
 
       - name: Copy DAGs into GCP
-        with:
-          composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
         run: |
           list_files=$(cat dag_files.txt | tr '\n' ' ')
           
           for file in $list_files; do
             folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            gsutil cp "${file}" "${{ needs.review.outputs.composer_gcs_bucket }}/dags/${folder}/dags/" 
+            gsutil cp "${file}" "${{ github.event.inputs.composer_gcs_bucket }}/dags/${folder}/dags/" 
           done
 
       - name: Check DAGs Composer
-        with:
-          composer-environment-name: ${{ needs.review.outputs.composer_environment_name }}
-          composer-gcs-bucket: ${{ needs.review.outputs.composer_gcs_bucket }}
-          composer-location: ${{ needs.review.outputs.region }}
         run: |
           POLL_PERIOD=60 # Poll every minute
           WHILE_TIMEOUT=$((60*15)) # 15 minutes
@@ -66,11 +73,11 @@ jobs:
             ELAPSED=$((ELAPSED + POLL_PERIOD))
 
             deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
-            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"])] | length')
+            composer_dags=$(gcloud composer environments run ${{ github.event.inputs.composer_environment_name }} --location=${{ github.event.inputs.region }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"])] | length')
             
             if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
               echo "DAG counts differ. Retrying in 1 minute..."
-              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json 2>/dev/null)
+              errors=$(gcloud composer environments run ${{ github.event.inputs.composer_environment_name }} --location=${{ github.event.inputs.region }} dags list-import-errors -- --output=json 2>/dev/null)
               
               if [[ -z "$errors" ]]; then
                 echo "No import errors found. Continuing loop."
