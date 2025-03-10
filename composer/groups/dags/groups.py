@@ -12,7 +12,7 @@ import os
 
 print(1)
 print(2)
-dag_version = "4.0.6"
+dag_version = "4.0.7"
 
 args = {
      'retries': 3,
