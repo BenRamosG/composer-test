@@ -51,6 +51,8 @@ jobs:
         if: steps.changed-files.outputs.any_changed
         run: |
           dag_path=${{ steps.changed-files.outputs.all_changed_files }}
-          echo "$dag"
-          # python get_dag_version.py "$dag_path" "dag_version"
+          dag_version=$(python get_dag_version.py "$dag_path" "dag_version")
+
+          echo "$dag_version"
+          
    
