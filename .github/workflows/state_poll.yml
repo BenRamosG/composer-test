@@ -37,60 +37,17 @@ jobs:
       - name: set credentials file
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
-      - name: Files founded
-        id: files-founded
+      - name: Get Changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: false
+          files: composer/**/dags/**/*.py
+
+      - name: Get Version
+        if: steps.changed-files.outputs.any_changed
         run: |
-          find composer/*/dags/ -name '*.py' > dag_files.txt
-          cat dag_files.txt
-          file_count=$(wc -l < dag_files.txt)
-          echo "Total number of Python files found: $file_count"
-          echo "total_deployed=$file_count" >> $GITHUB_OUTPUT
-
-      - name: Copy DAGs into GCP
-        run: |
-          list_files=$(cat dag_files.txt | tr '\n' ' ')
-          
-          for file in $list_files; do
-            folder=$(echo "${file}" | awk -F'/' '{print $NF}' | awk -F'.' '{print $1}')
-            gsutil cp "${file}" "gs://${{ github.event.inputs.composer-gcs-bucket }}/dags/${folder}/dags/" 
-          done
-
-      - name: Check DAGs Composer
-        run: |
-          POLL_PERIOD=60 # Poll every minute
-          WHILE_TIMEOUT=$((60*15)) # 15 minutes
-          ELAPSED=0 # Runtime
-
-          while true; do
-
-            # Check for timeout
-            if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
-              echo "State polling timed out."
-              exit 1
-            fi
-
-            sleep $POLL_PERIOD
-            ELAPSED=$((ELAPSED + POLL_PERIOD))
-
-            deployed_dags=${{ steps.files-founded.outputs.total_deployed }}
-            composer_dags=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq '[.[] | select(.owners != ["airflow"])] | length')
-            
-            if [[ "$deployed_dags" -ne "$composer_dags" ]]; then
-              echo "DAG counts differ. Retrying in 1 minute..."
-              errors=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list-import-errors -- --output=json 2>/dev/null)
-              
-              if [[ -z "$errors" ]]; then
-                echo "No import errors found. Continuing loop."
-                continue # Skip to the next iteration of the loop
-              else
-                echo "Import errors found:"
-                echo "$errors"
-                echo "Send error ...."
-                break
-              fi
-                          
-            else
-              echo "DAG counts match. Exiting."
-              break  # Exit the loop when counts are equal
-            fi
-          done
+          dag_path=${{ steps.changed-files.outputs.all_changed_files }}
+          echo "$dag"
+          # python get_dag_version.py "$dag_path" "dag_version"
+   
