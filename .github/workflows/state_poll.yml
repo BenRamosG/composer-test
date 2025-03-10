@@ -1,6 +1,9 @@
 name: Count Python Files in DAGs
 
 on:
+  push:
+    branches:
+      -dev
   workflow_dispatch:
     inputs:
       composer-gcs-bucket:
