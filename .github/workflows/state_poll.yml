@@ -93,23 +93,18 @@ jobs:
             
             composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
             echo "$composer_dags"
+
+            errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
+            is_empty=$(echo "$errors" | jq 'length')
+
+            if [[ "$is_empty" -ne 0 ]]; then
+              echo "$errors"
+              exit 1
+            fi
             
             if [[ "$composer_dags" -eq 0 ]]; then
               echo "No DAG"
-            
-              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
-              is_empty=$(echo "$errors" | jq 'length')
-              
-              echo "$errors"
-              
-              if [[ "$is_empty" -eq 0 ]]; then
-                echo "No import errors found. Continuing loop."
-              else
-                echo "Import errors found:"
-                echo "$errors"
-                echo "Send error ...."
-                break
-              fi
+              echo "Continuing loop."
             else
               echo "DAG match. Exiting."
               break
