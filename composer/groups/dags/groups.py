@@ -11,7 +11,7 @@ import json
 import os
 
 print(12)
-dag_version = "4.0.7"
+dag_version = "4.0.8"
 
 args = {
      'retries': 3,
