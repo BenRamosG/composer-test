@@ -98,10 +98,10 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
+            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
             
             if [[ "$composer_dags" -eq 0 ]]; then
-              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ github.event.inputs.composer-location }} dags list-import-errors -- --output=json)
+              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
 
               echo "$errors"
               
