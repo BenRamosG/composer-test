@@ -24,4 +24,4 @@ jobs:
       - name: Read buckets
         shell: bash
         run: |
-          echo "${{ steps.set-vars.outputs.path }}
+          echo "${{ steps.set-vars.outputs.path }}"
