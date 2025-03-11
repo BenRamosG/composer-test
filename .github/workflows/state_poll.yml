@@ -94,20 +94,20 @@ jobs:
             composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
             echo "$composer_dags"
 
-            errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
-            is_empty=$(echo "$errors" | jq 'length')
-
-            if [[ "$is_empty" -ne 0 ]]; then
-              echo "$errors"
-              exit 1
-            fi
-            
             if [[ "$composer_dags" -eq 0 ]]; then
               echo "No DAG"
               echo "Continuing loop."
             else
               echo "DAG match. Exiting."
               break
+            fi
+
+            errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
+            is_empty=$(echo "$errors" | jq 'length')
+
+            if [[ "$is_empty" -ne 0 ]]; then
+              echo "$errors"
+              exit 1
             fi
             
           done
