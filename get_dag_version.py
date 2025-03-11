@@ -18,7 +18,7 @@ def get_dag_version(file_path, variable_name):
 
     except FileNotFoundError:
         print(f"Error: File not found at {file_path}")
-        ys.stderr.write(f"Error: File not found at {file_path}")
+        sys.stderr.write(f"Error: File not found at {file_path}")
         sys.stdout.flush()
         sys.exit(1)
         # return None
