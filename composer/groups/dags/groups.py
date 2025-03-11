@@ -10,7 +10,7 @@ import time
 import json
 import os
 
-print(1111111)
+print(1)
 dag_version = "4.0.6"
 
 args = {
