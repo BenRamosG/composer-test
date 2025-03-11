@@ -66,12 +66,12 @@ jobs:
           WHILE_TIMEOUT=$((60*15)) # 15 minutes
           ELAPSED=0                # Runtime
 
-          deployed_dags=${{ steps.files-founded.outputs.new_version }}
+          deployed_dags=${{ steps.get-change.outputs.dag_new_version }}
 
           echo "$deployed_dags"
 
           while true; do
-
+            
             # Check for timeout
             if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
               echo "State polling timed out."
@@ -83,6 +83,8 @@ jobs:
             
             composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "$deployed_dags")] | length ')
 
+            echo "composer_dags"
+            
             if [[ "$composer_dags" -eq 0 ]]; then
               echo "Variable is zero."
               break
