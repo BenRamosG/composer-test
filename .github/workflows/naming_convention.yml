@@ -36,4 +36,12 @@ jobs:
       - name: Read File
         run: |
           dag_version=$(python get_dag_version.py "${{ github.event.inputs.path }}" "dag_version")
+          
+          if [ $? -ne 0 ]; then
+            echo "Error: Python script failed."
+            exit 1
+          fi
+          
+          echo "DAG version: $dag_version"
+          
           echo $dag_version
