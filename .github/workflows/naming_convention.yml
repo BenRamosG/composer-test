@@ -17,6 +17,8 @@ jobs:
         id: set-vars
         run: |
           echo "path=composer/groups/dags/groups.py" >> $GITHUB_OUTPUT
+          echo "version=1.0.1" >> $GITHUB_OUTPUT
+          echo "tag=groups_v_1.0.1" >> $GITHUB_OUTPUT
           
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,3 +27,6 @@ jobs:
         shell: bash
         run: |
           echo "${{ steps.set-vars.outputs.path }}"
+          echo "${{ steps.set-vars.outputs.version }}"
+          echo "${{ steps.set-vars.outputs.tag }}"
+          
