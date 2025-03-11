@@ -83,8 +83,10 @@ jobs:
 
             if [[ "$variable" -eq 0 ]]; then
               echo "Variable is zero."
+              break
             else
               echo "Variable is not zero."
+              break
             fi
             
             
