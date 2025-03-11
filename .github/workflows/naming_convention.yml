@@ -15,7 +15,7 @@ on:
         default: "1.0.1"
       tag:
         description: 'Tag name to create'
-        required: true
+        required: false
         type: string
         default: ''
 
@@ -56,6 +56,13 @@ jobs:
           data_content=$(cat "${{ github.event.inputs.path }}")
           echo "$data_content" >> $GITHUB_STEP_SUMMARY
 
-      - name: Print
+      - name: Configure Git User
         run: |
-          git status
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+      - name: Commit files
+        run: |
+          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
+            echo "Esta vacio"
+          fi
