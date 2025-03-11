@@ -31,6 +31,8 @@ jobs:
           errors=$(gcloud composer environments run instance2 --location=us-central1 dags list-import-errors -- --output=json 2>&1)
           exit_code=$?
 
+          echo " $exit_code "
+
           if [ $exit_code -eq 1 ]; then
             echo $errors
           else
