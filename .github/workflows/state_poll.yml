@@ -68,6 +68,8 @@ jobs:
 
           deployed_dags=${{ steps.files-founded.outputs.new_version }}
 
+          echo "$deployed_dags"
+
           while true; do
 
             # Check for timeout
@@ -79,7 +81,7 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "${deployed_dags}")] | length ')
+            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "$deployed_dags")] | length ')
 
             if [[ "$composer_dags" -eq 0 ]]; then
               echo "Variable is zero."
