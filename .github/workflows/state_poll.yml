@@ -79,14 +79,12 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "${deployed_dags}")][0].dag_id')
+            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "${deployed_dags}")] | length ')
 
-            if [[ -z "$composer_dags" ]]; then
-              echo "DAG 'groups_4.0.6' not found or other error."
-              break
+            if [[ "$variable" -eq 0 ]]; then
+              echo "Variable is zero."
             else
-              echo "DAG ID founded"
-              break
+              echo "Variable is not zero."
             fi
             
             
