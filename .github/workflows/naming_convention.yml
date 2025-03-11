@@ -53,8 +53,8 @@ jobs:
           
           echo "DAG version: $dag_version"
           
-          data_content=$(cat "${{ github.event.inputs.path }})
-          echo "$data_content " >> $GITHUB_STEP_SUMMARY
+          data_content=$(cat "${{ github.event.inputs.path }}")
+          echo "$data_content" >> $GITHUB_STEP_SUMMARY
 
       - name: Print
         run: |
