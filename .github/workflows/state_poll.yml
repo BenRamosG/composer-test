@@ -72,7 +72,7 @@ jobs:
       - name: Check DAGs Composer
         if: steps.changed-files.outputs.any_changed
         run: |
-          POLL_PERIOD=5           # Poll every minute
+          POLL_PERIOD=60           # Poll every minute
           WHILE_TIMEOUT=$((60*15)) # 15 minutes
           ELAPSED=0                # Runtime
 
@@ -92,27 +92,16 @@ jobs:
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
             composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
+            echo "DAGs found:"
             echo "$composer_dags"
             
-            if [[ "$composer_dags" -eq 0 ]]; then
-              echo "No DAG"
+            errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
+            is_empty=$(echo "$errors" | jq 'length')
             
-              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
-              is_empty=$(echo "$errors" | jq 'length')
-              
+            if [[ "$is_empty" -ne 0 ]]; then
+              echo "Import errors found:"
               echo "$errors"
-              
-              if [[ "$is_empty" -eq 0 ]]; then
-                echo "No import errors found. Continuing loop."
-              else
-                echo "Import errors found:"
-                echo "$errors"
-                echo "Send error ...."
-                break
-              fi
-            else
-              echo "DAG match. Exiting."
-              break
+              exit 1
             fi
-            
+
           done
