@@ -67,5 +67,5 @@ jobs:
       - name: Move into GCP
         if: steps.changed-files.outputs.any_changed
         run: | 
-          gcloud storage cp "${{ steps.get-change.outputs.dag_change }}" gs://${{ need.review.outputs.composer_gcs_bucket }}"/dags/"${{ steps.get-change.outputs.dag_name }}"/dags/
+          gcloud storage cp "${{ steps.get-change.outputs.dag_change }}" gs://${{ needs.review.outputs.composer_gcs_bucket }}"/dags/"${{ steps.get-change.outputs.dag_name }}"/dags/
 
