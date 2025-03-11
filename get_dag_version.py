@@ -24,6 +24,7 @@ def get_dag_version(file_path, variable_name):
         # return None
     except Exception as e:
         print(f"An error occurred: {e}")
+        sys.stderr.write(f"An error occurred: {e}")
         sys.stdout.flush()
         sys.exit(1) 
         # return None
@@ -32,6 +33,7 @@ def get_dag_version(file_path, variable_name):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python get_dag_version.py <filepath> <variablename>")
+        sys.stderr.write("Usage: python get_dag_version.py <filepath> <variablename>")
         sys.stdout.flush()
         sys.exit(1)
 
