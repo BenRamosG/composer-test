@@ -22,7 +22,7 @@ args = {
 
 
 
-with DAG("users",
+with DAG("users" + "_" +  dag_version,
          start_date= datetime(2025,3,8),
          schedule= "0 4 * * *",
          catchup= False,
