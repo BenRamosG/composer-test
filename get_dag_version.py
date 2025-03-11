@@ -18,10 +18,12 @@ def get_dag_version(file_path, variable_name):
 
     except FileNotFoundError:
         print(f"Error: File not found at {file_path}")
-        return None
+        sys.exit(1)
+        # return None
     except Exception as e:
         print(f"An error occurred: {e}")
-        return None
+        sys.exit(1) 
+        # return None
             
 
 if __name__ == "__main__":
