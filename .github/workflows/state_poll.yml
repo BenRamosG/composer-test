@@ -81,7 +81,7 @@ jobs:
             
             composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == "${deployed_dags}")] | length ')
 
-            if [[ "$variable" -eq 0 ]]; then
+            if [[ "$composer_dags" -eq 0 ]]; then
               echo "Variable is zero."
               break
             else
