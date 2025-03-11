@@ -4,21 +4,7 @@ on:
   push:
     branches:
       - dev
-  workflow_dispatch:
-    inputs:
-      composer-gcs-bucket:
-        description: "Bucket Composer environment"
-        required: true
-        default: "us-central1-instance-1833cf5d-bucket"
-      composer-environment-name:
-        description: "Name of Composer environment"
-        required: true
-        default: "instance"
-      composer-location:
-        description: "Name of Composer environment"
-        required: true
-        default: "us-central1"
-        
+
 jobs:
   review:
     name: Review Execution
@@ -41,6 +27,7 @@ jobs:
     permissions:
       id-token: write
     runs-on: ubuntu-latest
+    needs: review
 
     steps:
       - name: Checkout Repository
