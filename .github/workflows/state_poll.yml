@@ -62,53 +62,10 @@ jobs:
           
           echo "dag_change=$file_changed" >> $GITHUB_OUTPUT
           echo "dag_new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "dag_name=$file_name" >> $GITHUB_OUTPUT
 
-      - name: Check DAGs Composer
+      - name: Move into GCP
         if: steps.changed-files.outputs.any_changed
-        run: |
-          POLL_PERIOD=5           # Poll every minute
-          WHILE_TIMEOUT=$((60*15)) # 15 minutes
-          ELAPSED=0                # Runtime
+        run: | 
+          gcloud storage cp "${{ steps.get-change.outputs.dag_change }}" gs://${{ need.review.outputs.composer_gcs_bucket }}"/dags/"${{ steps.get-change.outputs.dag_name }}"/dags/
 
-          deployed_dags=${{ steps.get-change.outputs.dag_new_version }}
-
-          echo "$deployed_dags"
-
-          while true; do
-            
-            # Check for timeout
-            if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
-              echo "State polling timed out."
-              exit 1
-            fi
-
-            sleep $POLL_PERIOD
-            ELAPSED=$((ELAPSED + POLL_PERIOD))
-            
-            composer_dags=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
-            
-            if [[ "$composer_dags" -eq 0 ]]; then
-              errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
-
-              echo "$errors"
-              
-              if [[ -z "$errors" ]]; then
-                echo "No import errors found. Continuing loop."
-              else
-                echo "Import errors found:"
-                echo "$errors"
-                echo "Send error ...."
-                break
-              fi
-            else
-              echo "DAG match. Exiting."
-              break
-            fi
-            
-          done
-          
-          
-
-
-          
-   
