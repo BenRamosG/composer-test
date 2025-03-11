@@ -1,0 +1,27 @@
+name: Naming Convention
+
+on:
+  workflow_dispatch:
+
+jobs:
+  
+  connect:
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Set Variables
+        id: set-vars
+        run: |
+          echo "path=composer/groups/dags/groups.py" >> $GITHUB_OUTPUT
+          
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Read buckets
+        shell: bash
+        run: |
+          echo "${{ steps.set-vars.outputs.path }}
