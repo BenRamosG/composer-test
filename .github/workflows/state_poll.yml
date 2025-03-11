@@ -59,10 +59,40 @@ jobs:
           echo "dag_change=$file_changed" >> $GITHUB_OUTPUT
           echo "dag_new_version=$new_version" >> $GITHUB_OUTPUT
 
-      - name: Print
+      - name: Check DAGs Composer
         if: steps.changed-files.outputs.any_changed
         run: |
-          echo "${{ steps.get-change.outputs.dag_new_version }}"
+          POLL_PERIOD=60           # Poll every minute
+          WHILE_TIMEOUT=$((60*15)) # 15 minutes
+          ELAPSED=0                # Runtime
+
+          deployed_dags=${{ steps.files-founded.outputs.new_version }}
+
+          while true; do
+
+            # Check for timeout
+            if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
+              echo "State polling timed out."
+              exit 1
+            fi
+
+            sleep $POLL_PERIOD
+            ELAPSED=$((ELAPSED + POLL_PERIOD))
+            
+            composer_dags=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq '[.[] | select(.dag_id == "$deployed_dags")][0].dag_id')
+
+            if [[ -z "$composer_dags" ]]; then
+              echo "DAG 'groups_4.0.6' not found or other error."
+              break
+            else
+              echo "DAG ID founded"
+              break
+            fi
+            
+            
+          done
+          
+          
 
 
           
