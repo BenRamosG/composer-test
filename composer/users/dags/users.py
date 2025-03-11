@@ -13,7 +13,7 @@ import json
 import os
 import a
 
-dag_version = "1.0.1"
+dag_version = "1.0.2"
 
 args = {
      'retries': 3,
