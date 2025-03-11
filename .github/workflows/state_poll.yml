@@ -98,10 +98,11 @@ jobs:
               echo "No DAG"
             
               errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json)
-
+              is_empty=$(echo "$errors" | jq 'length')
+              
               echo "$errors"
               
-              if [[ -z "$errors" ]]; then
+              if [[ "$errors" -eq 0 ]]; then
                 echo "No import errors found. Continuing loop."
               else
                 echo "Import errors found:"
