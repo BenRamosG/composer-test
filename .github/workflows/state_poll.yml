@@ -102,7 +102,7 @@ jobs:
               
               echo "$errors"
               
-              if [[ "$errors" -eq 0 ]]; then
+              if [[ "$is_empty" -eq 0 ]]; then
                 echo "No import errors found. Continuing loop."
               else
                 echo "Import errors found:"
