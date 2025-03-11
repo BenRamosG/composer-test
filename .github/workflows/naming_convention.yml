@@ -2,6 +2,22 @@ name: Naming Convention
 
 on:
   workflow_dispatch:
+    inputs:
+      path:
+        description: 'Path file to check version and update'
+        required: true
+        type: string
+        default: "composer/groups/dags/groups.py"
+      version:
+        description: 'The new version to update (e.g., 1.2.3)'
+        required: true
+        type: string
+        default: "1.0.1"
+      tag:
+        description: 'Tag name to create'
+        required: true
+        type: string
+        default: ''
 
 jobs:
   
@@ -13,20 +29,10 @@ jobs:
 
 
     steps:
-      - name: Set Variables
-        id: set-vars
-        run: |
-          echo "path=composer/groups/dags/groups.py" >> $GITHUB_OUTPUT
-          echo "version=1.0.1" >> $GITHUB_OUTPUT
-          echo "tag=groups_v_1.0.1" >> $GITHUB_OUTPUT
           
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Read buckets
-        shell: bash
-        run: |
-          echo "${{ steps.set-vars.outputs.path }}"
-          echo "${{ steps.set-vars.outputs.version }}"
-          echo "${{ steps.set-vars.outputs.tag }}"
-          
+        
+      - name: Read File
+          dag_version=$(python get_dag_version.py "${{ github.event.inputs.path }}" "dag_version")
+          echo $dag_version
