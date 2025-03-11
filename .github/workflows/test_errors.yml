@@ -28,7 +28,7 @@ jobs:
       - name: Read buckets
         shell: bash
         run: |
-          errors=$(gcloud composer environments run instance2 --location=us-central1 dags list-import-errors -- --output=json || true)
+          errors=$(gcloud composer environments run instance2 --location=us-central1 dags list-import-errors -- --output=json)
           exit_code=$?
 
           if [ $exit_code -eq 1 ]; then
