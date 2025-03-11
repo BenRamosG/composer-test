@@ -81,18 +81,25 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
-
-            echo "$composer_dags"
+            composer_dags=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
             
             if [[ "$composer_dags" -eq 0 ]]; then
-              echo "Variable is zero."
-              break
+              errors=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list-import-errors -- --output=json)
+
+              echo "$errors"
+              
+              if [[ -z "$errors" ]]; then
+                echo "No import errors found. Continuing loop."
+              else
+                echo "Import errors found:"
+                echo "$errors"
+                echo "Send error ...."
+                break
+              fi
             else
-              echo "Variable is not zero."
+              echo "DAG match. Exiting."
               break
             fi
-            
             
           done
           
