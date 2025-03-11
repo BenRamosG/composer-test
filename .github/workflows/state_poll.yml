@@ -81,7 +81,7 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq '[.[] | select(.dag_id == \"$deployed_dags\")] | length ')
+            composer_dags=$(gcloud composer environments run instance --location=us-central1 dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
 
             echo "$composer_dags"
             
