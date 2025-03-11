@@ -29,6 +29,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Retrieve variables from master.json
+        uses: ./.github/actions/master-variables
+        id: master_variables
+
       - id: auth
         name: Google Cloud Auth
         uses: google-github-actions/auth@v2
@@ -81,10 +85,10 @@ jobs:
             sleep $POLL_PERIOD
             ELAPSED=$((ELAPSED + POLL_PERIOD))
             
-            composer_dags=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
+            composer_dags=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ github.event.inputs.composer-location }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$deployed_dags\")] | length ")
             
             if [[ "$composer_dags" -eq 0 ]]; then
-              errors=$(gcloud composer environments run ${{ github.event.inputs.composer-environment-name }} --location=${{ github.event.inputs.composer-location }} dags list-import-errors -- --output=json)
+              errors=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ github.event.inputs.composer-location }} dags list-import-errors -- --output=json)
 
               echo "$errors"
               
