@@ -63,6 +63,16 @@ jobs:
           
       - name: Commit files
         run: |
-          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
-            echo "Esta vacio"
+          git add .
+          git commit -m "GITHUB-ACTION: Update version DAG"
+          
+          if [[ -n "${{ github.event.inputs.tag }}" ]]; then
+            git tag ${{ github.event.inputs.tag }}
           fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
+          tags: ${{ inputs.create_tag != '' }}
