@@ -10,7 +10,7 @@ import time
 import json
 import os
 
-dag_version = "1.0.2"
+dag_version = "1.0.5"
 
 args = {
      'retries': 3,
