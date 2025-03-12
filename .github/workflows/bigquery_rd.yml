@@ -24,3 +24,17 @@ jobs:
 
       - name: set credentials file
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+      - name: Run SQL
+        run: |
+          retries=3
+          query='SELECT abc FROM `telus-tir-project.dev_01_tir_staging_dataset.StgProvider`'
+
+          query_result=$(bq query --dry_run --use_legacy_sql=false --format=prettyjson "$query")
+
+          if echo "$query_result" | jq -e '.' > /dev/null 2>&1; then
+            state=$(echo "$query_result" | jq -r '.status.state')    
+
+          else
+            echo "Error query result: $query_result"    
+          fi
