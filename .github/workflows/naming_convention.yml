@@ -67,6 +67,7 @@ jobs:
           git commit -m "GITHUB-ACTION: Update version DAG"
           
           if [[ -n "${{ github.event.inputs.tag }}" ]]; then
+            echo "Create Tag"
             git tag ${{ github.event.inputs.tag }}
           fi
 
@@ -75,4 +76,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref_name }}
-          tags: ${{ inputs.create_tag != '' }}
+          tags: ${{ github.event.inputs.tag != '' }}
