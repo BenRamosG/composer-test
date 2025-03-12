@@ -39,7 +39,7 @@ jobs:
   increase-version:
     permissions:
       id-token: write
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
     needs: review
 
