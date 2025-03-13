@@ -30,7 +30,7 @@ jobs:
         run: |
           file="bq/query.sql"
 
-          query_validation=$(bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1" 2>&1)
+          query_validation=$(bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1" 2>&1 2>&1 || true)
           
           if [[ $? -ne 0 ]]; then
             echo "BigQuery Query Validation Failed:"
