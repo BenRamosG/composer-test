@@ -21,6 +21,7 @@ child_dags_ids = {} # Fetch these from the other dag files
 
 with DAG("master_dag",
 default_args=default_args,
+start_date= datetime(2025,3,12),
 catchup=False,
 max_active_runs=1,
 schedule='0 4 * * *') as dag:
