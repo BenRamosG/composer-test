@@ -29,9 +29,13 @@ jobs:
         shell: bash
         run: |
           file="bq/query.sql"
-        
-          query_validation=$(bq query --dry_run --use_legacy_sql=false --format=csv < "$file")
 
+          
+          query_validation=$(bq query --dry_run --use_legacy_sql=false --format=csv < "$file")
+          echo "$query_validation"
+          echo "No corrio"
+
+          
           if [[ "$query_validation" =~ ^[0-9]+$ ]]; then
             echo "It works"
           else
