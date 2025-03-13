@@ -42,5 +42,3 @@ with DAG("groups" + "_" +  dag_version,
 
 start >> sleep_task
 
-
-
