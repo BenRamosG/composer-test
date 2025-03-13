@@ -15,6 +15,7 @@ default_args = {
     'retries': 1, # Unlike rest of the DAGs, master dag has no automatic retries
 }
 
+
 child_dags_ids = {} # Fetch these from the other dag files
 
 with DAG("master_dag",
