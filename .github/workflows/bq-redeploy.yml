@@ -31,7 +31,7 @@ jobs:
           file="bq/query.sql"
 
           echo "entro"
-          query_validation=$(bq query --dry_run --use_legacy_sql=false --format=csv < "$file")
+          query_validation=$(bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1")
           echo "$query_validation"
           echo "No corrio"
 
