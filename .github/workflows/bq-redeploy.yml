@@ -28,7 +28,7 @@ jobs:
       - name: Read buckets
         shell: bash
         run: |
-          $file="CREATE TABLE `telus-tir-project.dev_01_tir_staging_dataset.StgProvider` (Audit_Table STRING,max_id INT64); "
+          file="CREATE TABLE `telus-tir-project.dev_01_tir_staging_dataset.StgProvider` (Audit_Table STRING,max_id INT64); "
         
           query_validation=$(bq query --dry_run --use_legacy_sql=false --format=csv < "$file")
 
