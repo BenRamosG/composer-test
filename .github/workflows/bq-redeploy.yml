@@ -30,6 +30,8 @@ jobs:
         run: |
           file="bq/query.sql"
 
+          bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1"
+          
           echo "entro"
           query_validation=$(bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1")
           echo "$query_validation"
