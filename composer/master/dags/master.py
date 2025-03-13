@@ -5,6 +5,7 @@ from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.operators.dummy import DummyOperator
 
+dag_version = "1.0.0"
 
 reload_audit_table=f"SELECT 'Execute audit table procedure';"
 
