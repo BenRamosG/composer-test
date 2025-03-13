@@ -30,18 +30,9 @@ jobs:
         run: |
           file="bq/query.sql"
 
-          
           query_validation=$(bq query --use_legacy_sql=false --dry_run --format=csv "SELECT 1")
           is_valid=$?
 
-          
-          if [[ "$is_valid" -eq 0 ]]; then
-            if [[ "$query_validation" =~ ^[0-9]+$ ]]; then
-              echo "It works"
-            else
-              echo "Validation Error: $file: $query_validation"
-            fi
-          else
-            echo "Error: $query_validation"
-          fi
+          echo "$is_valid"
+
           
