@@ -110,9 +110,9 @@ def process_sql_files(file_paths):
             print(f"SQL file not found: {file_path}")
 
     if len(error_list) > 0:
-        print("Errooorrrr list") # BDRJ
-        print(error_list)
-        # exit(10)  BDRJ
+        print(error_list) #BDRJ
+        return error_list
+        
 
 
 
@@ -137,7 +137,10 @@ if __name__ == "__main__":
     # Process all changed files
     changed_files = read_file_paths(all_changed_files_path)
     print("Processing changed SQL files:")
-    process_sql_files(changed_files)
+    output_query = process_sql_files(changed_files)
+
+    if output_query is not None:
+        print(output_query)
 
     # Process renamed files (if needed)
     renamed_files = read_file_paths(renamed_files_path)
