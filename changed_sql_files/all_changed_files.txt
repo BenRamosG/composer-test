@@ -1,2 +1,2 @@
-tir-bigquery/01_tir_staging_dataset/01_tables/sql/StgProvider.sql tir-bigquery/01_tir_staging_dataset/01_tables/sql/StgProvider2.sql  tir-bigquery/01_tir_staging_dataset/01_tables/sql/query.sql
+tir-bigquery/01_tir_staging_dataset/01_tables/sql/StgProvider.sql tir-bigquery/01_tir_staging_dataset/01_tables/sql/query.sql
 
