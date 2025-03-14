@@ -60,7 +60,6 @@ def run_query(sql, project_id, configs, file=None):
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
         print(f"#### :x: Error: {e}") #BDRJ
-        # error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e} #BDRJ
         error_list.append(file) #BDRJ
 
 
@@ -147,3 +146,7 @@ if __name__ == "__main__":
         if renamed_files:
             print("\nProcessing renamed SQL files:")
             output_rename = process_sql_files(renamed_files)
+
+        output_process.extend(output_rename)
+
+        print(output_process)
