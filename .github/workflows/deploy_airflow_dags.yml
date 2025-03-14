@@ -2,15 +2,48 @@ name: Airflow DAGs Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+
+      deploy_tag:
+        description: "Git Tag to deploy"
+        required: false
+        type: string
+
+      deploy_branch:
+        description: "Branch to deploy if no tag was provided"
+        required: false
+        type: string
+
   
 jobs:
   log-ref:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Validate inputs
+        if: ${{ !github.event.inputs.deploy_tag && !github.event.inputs.deploy_branch }}
+        run: |
+          echo "Error: Either deploy_tag or deploy_branch must be provided."
+          exit 1
+
       - name: Checkout repository
-        uses: actions/checkout@v3       
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.deploy_tag || github.event.inputs.deploy_branch }}
+
       - name: Log git reference
         run: |
           echo "Selected git reference: ${{ github.ref }}"
           echo "SHA: ${{ github.sha }}"
           echo "Short SHA: $(git rev-parse --short ${{ github.sha }})"
+
+          echo "Tag Name: ${{ github.event.inputs.deploy_tag }}"
+          echo "Branch Name: ${{ github.event.inputs.deploy_branch }}"
+
+          if [[ "${{ github.event.inputs.deploy_tag }}" != "" ]]; then
+            echo "DAG IDs will be concatenated with tag: ${{ github.event.inputs.deploy_tag }}"
+          else
+            SHORTSHA=$(git rev-parse --short ${{ github.sha }})
+            echo "Will deploy latest changes at branch: ${{ github.event.inputs.deploy_branch }}"
+            echo "DAG IDs will be concatenated with short SHA from commit: $SHORTSHA"
+          fi
