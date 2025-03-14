@@ -60,8 +60,8 @@ def run_query(sql, project_id, configs, file=None):
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
         print(f"#### :x: Error: {e}") #BDRJ
-        error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e} #BDRJ
-        error_list.append(error) #BDRJ
+        # error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e} #BDRJ
+        error_list.append(file) #BDRJ
 
 
 def replace_placeholders(query, placeholders, project_id):
@@ -140,14 +140,17 @@ if __name__ == "__main__":
         # Process all changed files
         changed_files = read_file_paths(all_changed_files_path)
         print("Processing changed SQL files:")
-        output_query = process_sql_files(changed_files)
-    
-        if output_query is not None:
-            print("")
-    
+        output_process = process_sql_files(changed_files)
+
+        print(len(output_process))
+        
         # Process renamed files (if needed)
         renamed_files = read_file_paths(renamed_files_path)
         if renamed_files:
             print("\nProcessing renamed SQL files:")
-            process_sql_files(renamed_files)
-    
+            output_rename = process_sql_files(renamed_files)
+
+        print(len(output_rename))
+        
+        #if output_query is not None:
+        #    print("")
