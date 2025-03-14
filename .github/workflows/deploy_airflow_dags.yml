@@ -16,7 +16,7 @@ on:
 
   
 jobs:
-  log-ref:
+  set-deploying-artifact-and-dag-ids:
     runs-on: ubuntu-latest
     steps:
 
@@ -31,19 +31,19 @@ jobs:
         with:
           ref: ${{ github.event.inputs.deploy_tag || github.event.inputs.deploy_branch }}
 
-      - name: Log git reference
+      - name: Select git reference to deploy
         run: |
           echo "Selected git reference: ${{ github.ref }}"
           echo "SHA: ${{ github.sha }}"
-          echo "Short SHA: $(git rev-parse --short ${{ github.sha }})"
-
-          echo "Tag Name: ${{ github.event.inputs.deploy_tag }}"
-          echo "Branch Name: ${{ github.event.inputs.deploy_branch }}"
-
-          if [[ "${{ github.event.inputs.deploy_tag }}" != "" ]]; then
-            echo "DAG IDs will be concatenated with tag: ${{ github.event.inputs.deploy_tag }}"
+          DEPLOY_TAG=${{ github.event.inputs.deploy_tag }}
+            
+          if [[ "$DEPLOY_TAG" != "" ]]; then
+            echo "DAG IDs will be concatenated with tag: $DEPLOY_TAG"
+            echo "dags_concat_id=$DEPLOY_TAG" >> $GITHUB_OUTPUT
+          
           else
             SHORTSHA=$(git rev-parse --short ${{ github.sha }})
             echo "Will deploy latest changes at branch: ${{ github.event.inputs.deploy_branch }}"
             echo "DAG IDs will be concatenated with short SHA from commit: $SHORTSHA"
+            echo "dags_concat_id=$SHORTSHA" >> $GITHUB_OUTPUT
           fi
