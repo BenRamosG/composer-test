@@ -14,7 +14,7 @@ try:
     env = args.env
     configs_str = args.configs
     query_location = args.location
-    files = args.files
+    files = args.files #BDRJ
 except Exception as e:
     print(e)
 
@@ -132,7 +132,7 @@ def read_file_paths(file_path):
 if __name__ == "__main__":
     if files:
         print('Lleno')
-    else
+    else:
         print('Vacio')
     
     # Paths to the changed files and renamed files lists
