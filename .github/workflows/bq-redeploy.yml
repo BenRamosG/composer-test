@@ -2,7 +2,7 @@ name: bq-redeploy
 on:
   push:
     branches:
-      -dev
+      - dev
 
 jobs:
   connect:
