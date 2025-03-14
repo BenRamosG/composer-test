@@ -44,7 +44,7 @@ def run_query(sql, project_id, configs, file=None):
     try:
         # sql_query = read_sql(sql).format(**configs)
         print(f"Project_id: {project_id}")
-        print(f"Path: {file}")
+        print(f"Path: {file}") #BDRJ
         print(f"Running Query: {sql}")
         job_config = bigquery.QueryJobConfig(dry_run=False)
         job = bq.query(sql, project=project_id, job_config=job_config)
@@ -57,9 +57,9 @@ def run_query(sql, project_id, configs, file=None):
         if job.errors:
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
-        print(f"Error: {e}")
-        error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e}
-        error_list.append(error)
+        print(f"Error: {e}") #BDRJ
+        error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e} #BDRJ
+        error_list.append(error) #BDRJ
 
 
 def replace_placeholders(query, placeholders, project_id):
@@ -112,6 +112,7 @@ def process_sql_files(file_paths):
             print(f"SQL file not found: {file_path}")
 
     if len(error_list) > 0:
+        print(len(error_list)) #BDRJ
         print(error_list) #BDRJ
         return error_list
         
