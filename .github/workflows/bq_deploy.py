@@ -113,7 +113,6 @@ def process_sql_files(file_paths):
 
     if len(error_list) > 0:
         print(len(error_list)) #BDRJ
-        print(error_list) #BDRJ
         return error_list
         
 
