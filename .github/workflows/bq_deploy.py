@@ -56,7 +56,7 @@ def run_query(sql, project_id, configs, file=None):
         if job.errors:
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
-        error = {f"{file}": e} if file else {f"{sql}": e}
+        error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e}
         error_list.append(error)
 
 
@@ -110,7 +110,7 @@ def process_sql_files(file_paths):
             print(f"SQL file not found: {file_path}")
 
     if len(error_list) > 0:
-        print("Errooorrrr list")
+        print("Errooorrrr list") # BDRJ
         print(error_list)
         exit(10)
 
