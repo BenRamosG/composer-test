@@ -12,5 +12,5 @@ jobs:
       - name: Log git reference
         run: |
           echo "Selected git reference: ${{ github.ref }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "SHA: ${{ github.sha | truncate 7  }}" # Remove  | truncate 7 if intending to use the full SHA
+          echo "SHA: ${{ github.sha }}"
+          echo "Short SHA: $(git rev-parse --short ${{ github.sha }})"
