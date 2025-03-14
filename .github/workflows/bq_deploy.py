@@ -56,7 +56,7 @@ def run_query(sql, project_id, configs, file=None):
         if job.errors:
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
-        print(f"Error: {e})
+        print(f"Error: {e}")
         error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e}
         error_list.append(error)
 
