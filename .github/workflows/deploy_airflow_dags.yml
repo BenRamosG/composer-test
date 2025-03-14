@@ -13,4 +13,4 @@ jobs:
         run: |
           echo "Selected git reference: ${{ github.ref }}"
           echo "Repository: ${{ github.repository }}"
-          echo "SHA: ${{ github.sha }}"
+          echo "SHA: ${{ github.sha | truncate 7  }}" # Remove  | truncate 7 if intending to use the full SHA
