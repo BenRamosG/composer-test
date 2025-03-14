@@ -1,0 +1,16 @@
+name: Airflow DAGs Deploy
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  log-ref:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3       
+      - name: Log git reference
+        run: |
+          echo "Selected git reference: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "SHA: ${{ github.sha }}"
