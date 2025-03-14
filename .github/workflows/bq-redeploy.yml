@@ -1,8 +1,7 @@
 name: bq-redeploy
+
 on:
-  push:
-    branches:
-      - dev
+  workflow_dispatch:
 
 jobs:
   connect:
@@ -27,19 +26,6 @@ jobs:
       - name: set credentials file
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
-
-      - name: Get Changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files: bq/*.sql
-          write_output_files: "true"
-          output_dir: "changed_sql_files"
-
-      - name: Print file
+      - name: BQ Deployment
         run: |
-          echo "${{ steps.changed-files.outputs.all_changed_files }}"
-          echo "Archivo"
-          cat changed_sql_files/all_changed_files.txt
-          
-      
+          pip install -r .github/workflows/requirements.txt
