@@ -9,10 +9,12 @@ try:
     parser.add_argument('--env', type=str, required=True, help='The branch name.')
     parser.add_argument('--configs', type=str, required=True, help='The configs variable.')
     parser.add_argument('--location', type=str, required=True, help='The location for running bq query.')
+    parser.add_argument('--files', type=str, required=False, help='Deploy specific files.') #BDRJ
     args = parser.parse_args()
     env = args.env
     configs_str = args.configs
     query_location = args.location
+    files = args.files
 except Exception as e:
     print(e)
 
@@ -57,7 +59,7 @@ def run_query(sql, project_id, configs, file=None):
         if job.errors:
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
-        print(f"### :x: Error: {e}") #BDRJ
+        print(f"#### :x: Error: {e}") #BDRJ
         error = {"file" : f"{file}", "error": e, "query": f"{sql}" } if file else {f"{sql}": e} #BDRJ
         error_list.append(error) #BDRJ
 
@@ -112,11 +114,7 @@ def process_sql_files(file_paths):
             print(f"SQL file not found: {file_path}")
 
     if len(error_list) > 0:
-        print(len(error_list)) #BDRJ
         return error_list
-        
-
-
 
 def read_file_paths(file_path):
     """Read file paths from a given file, handling multiple paths per line."""
@@ -132,6 +130,11 @@ def read_file_paths(file_path):
 
 
 if __name__ == "__main__":
+    if files:
+        print('Lleno')
+    else
+        print('Vacio')
+    
     # Paths to the changed files and renamed files lists
     all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
     renamed_files_path = 'changed_sql_files/renamed_files.txt'
