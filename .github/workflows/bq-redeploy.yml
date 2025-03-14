@@ -33,5 +33,5 @@ jobs:
       - name: BQ Deployment
         run: |
           pip install -r .github/workflows/requirements.txt
-          python .github/workflows/bq_deploy.py --env="dev" --configs="project_id=telus-tir-project" --location="us-central1"
-
+          errors = $(python .github/workflows/bq_deploy.py --env="dev" --configs="project_id=telus-tir-project" --location="us-central1")
+          echo "$errors" >> $GITHUB_STEP_SUMMARY
