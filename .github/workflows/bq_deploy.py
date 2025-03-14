@@ -133,22 +133,21 @@ if __name__ == "__main__":
     if files:
         print('Lleno')
     else:
-        print('Vacio')
+        # Paths to the changed files and renamed files lists
+        all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
+        renamed_files_path = 'changed_sql_files/renamed_files.txt'
     
-    # Paths to the changed files and renamed files lists
-    all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
-    renamed_files_path = 'changed_sql_files/renamed_files.txt'
-
-    # Process all changed files
-    changed_files = read_file_paths(all_changed_files_path)
-    print("Processing changed SQL files:")
-    output_query = process_sql_files(changed_files)
-
-    if output_query is not None:
-        print(output_query)
-
-    # Process renamed files (if needed)
-    renamed_files = read_file_paths(renamed_files_path)
-    if renamed_files:
-        print("\nProcessing renamed SQL files:")
-        process_sql_files(renamed_files)
+        # Process all changed files
+        changed_files = read_file_paths(all_changed_files_path)
+        print("Processing changed SQL files:")
+        output_query = process_sql_files(changed_files)
+    
+        if output_query is not None:
+            print("")
+    
+        # Process renamed files (if needed)
+        renamed_files = read_file_paths(renamed_files_path)
+        if renamed_files:
+            print("\nProcessing renamed SQL files:")
+            process_sql_files(renamed_files)
+    
