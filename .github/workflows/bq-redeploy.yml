@@ -38,6 +38,7 @@ jobs:
 
       - name: Print file
         run: |
-          cat "changed_sql_files/all_change_files.txt"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+          ls changed_sql_files/
           
       
