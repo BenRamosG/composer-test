@@ -14,6 +14,11 @@ on:
         required: false
         type: string
 
+      dags_to_deploy:
+        description: "Enter * to deploy all DAGs. Otherwise provide a comma separated list of DAG names to deploy."
+        required: true
+        type: string
+
   
 jobs:
   set-deploying-artifact-and-dag-ids:
@@ -21,10 +26,35 @@ jobs:
     steps:
 
       - name: Validate inputs
-        if: ${{ !github.event.inputs.deploy_tag && !github.event.inputs.deploy_branch }}
+        id: validate-deploy-inputs
         run: |
-          echo "Error: Either deploy_tag or deploy_branch must be provided."
-          exit 1
+          if [[ -z "${{ github.event.inputs.deploy_tag }}" && -z "${{ github.event.inputs.deploy_branch }}" ]]; then
+            echo "::error::Error: Either deploy_tag or deploy_branch must be provided."
+            exit 1
+          fi
+
+          DAGS_TO_DEPLOY=${{ github.event.inputs.dags_to_deploy }}
+
+          if [[ "$DAGS_TO_DEPLOY" == "*" ]]; then
+            echo "All DAGs will be deployed."
+            echo "deployed_dags=$DAGS_TO_DEPLOY" >> $GITHUB_OUTPUT
+
+          else
+            # Regex to validate the input string
+            regex="^([a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+)*$"
+
+            if ! [[ "$DAGS_TO_DEPLOY" =~ $regex ]]; then
+              echo "::error::Error: Input string contains invalid characters or format. Only alphanumeric and underscore characters are allowed. Values must be comma-separated with no whitespaces."
+              exit 1
+
+            else
+              echo "deployed_dags=$DAGS_TO_DEPLOY" >> "$GITHUB_OUTPUT"
+            
+            fi
+
+          fi
+
+
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,6 +62,7 @@ jobs:
           ref: ${{ github.event.inputs.deploy_tag || github.event.inputs.deploy_branch }}
 
       - name: Select git reference to deploy
+        id: deployref
         run: |
           echo "Selected git reference: ${{ github.ref }}"
           echo "SHA: ${{ github.sha }}"
