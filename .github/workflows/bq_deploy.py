@@ -146,7 +146,8 @@ if __name__ == "__main__":
         if renamed_files:
             print("\nProcessing renamed SQL files:")
             output_rename = process_sql_files(renamed_files)
-
-        output_process.extend(output_rename)
-
+        print("Final")
         print(output_process)
+        print(output_rename)
+        #output_process.extend(output_rename)
+        #print(output_process)
