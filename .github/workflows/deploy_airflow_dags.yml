@@ -15,21 +15,21 @@ on:
         type: string
 
       dags_to_deploy:
-        description: "Enter * to deploy all DAGs. Otherwise provide a comma separated list of DAG names to deploy."
+        description: "Enter * to deploy all DAGs. Otherwise provide a comma separated list of DAG names to deploy. Master DAG is always deployed."
         required: true
         type: string
 
   
 jobs:
-  set-deploying-artifact-and-dag-ids:
+  deploy-dags:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Validate inputs
+      - name: Validate input parameters
         id: validate-deploy-inputs
         run: |
           if [[ -z "${{ github.event.inputs.deploy_tag }}" && -z "${{ github.event.inputs.deploy_branch }}" ]]; then
-            echo "::error::Error: Either deploy_tag or deploy_branch must be provided."
+            echo "::error::Either deploy_tag or deploy_branch must be provided."
             exit 1
           fi
 
@@ -37,29 +37,29 @@ jobs:
 
           if [[ "$DAGS_TO_DEPLOY" == "*" ]]; then
             echo "All DAGs will be deployed."
-            echo "deployed_dags=$DAGS_TO_DEPLOY" >> $GITHUB_OUTPUT
+            echo "dags_to_deploy=$DAGS_TO_DEPLOY" >> $GITHUB_OUTPUT
 
           else
             # Regex to validate the input string
             regex="^([a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+)*$"
 
             if ! [[ "$DAGS_TO_DEPLOY" =~ $regex ]]; then
-              echo "::error::Error: Input string contains invalid characters or format. Only alphanumeric and underscore characters are allowed. Values must be comma-separated with no whitespaces."
+              echo "::error::Input string contains invalid characters or format. Only alphanumeric and underscore characters are allowed. Values must be comma-separated with no whitespaces."
               exit 1
 
             else
-              echo "deployed_dags=$DAGS_TO_DEPLOY" >> "$GITHUB_OUTPUT"
+              echo "dags_to_deploy=$DAGS_TO_DEPLOY" >> "$GITHUB_OUTPUT"
             
             fi
 
           fi
 
 
-
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.deploy_tag || github.event.inputs.deploy_branch }}
+
 
       - name: Select git reference to deploy
         id: deployref
@@ -78,3 +78,9 @@ jobs:
             echo "DAG IDs will be concatenated with short SHA from commit: $SHORTSHA"
             echo "dags_concat_id=$SHORTSHA" >> $GITHUB_OUTPUT
           fi
+
+
+      - name: Deploy DAGs
+        id: deployscript
+        run: |
+          echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
