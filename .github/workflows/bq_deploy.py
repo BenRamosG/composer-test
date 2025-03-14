@@ -110,6 +110,7 @@ def process_sql_files(file_paths):
             print(f"SQL file not found: {file_path}")
 
     if len(error_list) > 0:
+        print("Errooorrrr list"
         print(error_list)
         exit(10)
 
