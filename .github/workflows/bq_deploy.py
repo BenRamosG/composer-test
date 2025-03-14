@@ -44,6 +44,7 @@ def run_query(sql, project_id, configs, file=None):
     try:
         # sql_query = read_sql(sql).format(**configs)
         print(f"Project_id: {project_id}")
+        print(f"Path": {file}")
         print(f"Running Query: {sql}")
         job_config = bigquery.QueryJobConfig(dry_run=False)
         job = bq.query(sql, project=project_id, job_config=job_config)
