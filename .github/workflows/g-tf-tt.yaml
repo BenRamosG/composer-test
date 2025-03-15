@@ -1,4 +1,4 @@
-name: bq-redeploy
+name: g-tf-tt
 
 on:
   push:
