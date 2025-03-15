@@ -112,8 +112,8 @@ def process_sql_files(file_paths):
         else:
             print(f"SQL file not found: {file_path}")
 
-    if len(error_list) > 0:
-        return error_list
+    #if len(error_list) > 0:
+    #    return error_list
 
 def read_file_paths(file_path):
     """Read file paths from a given file, handling multiple paths per line."""
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         if renamed_files:
             print("\nProcessing renamed SQL files:")
             process_sql_files(renamed_files)
+        
         print("Final")
         print(error_list)
-        #output_process.extend(output_rename)
-        #print(output_process)
+        
