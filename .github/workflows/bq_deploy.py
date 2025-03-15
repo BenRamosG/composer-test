@@ -130,7 +130,9 @@ def read_file_paths(file_path):
 
 if __name__ == "__main__":
     if files:
-        print('Lleno')
+        list_files = files.split(",")
+        print("Manual Re-deploy")
+        process_sql_files(list_files)
     else:
         # Paths to the changed files and renamed files lists
         all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
