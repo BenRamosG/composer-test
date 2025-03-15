@@ -147,11 +147,11 @@ if __name__ == "__main__":
             print("\nProcessing renamed SQL files:")
             process_sql_files(renamed_files)
 
-        print(error_list)
-        
-        if error_list:
+        error_copy = error_list.copy()
+
+        if error_copy:
             print("\nRe-deploy errors:")
-            process_sql_files(error_list)
+            process_sql_files(error_copy)
 
 
         
