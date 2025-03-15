@@ -1,0 +1,38 @@
+name: bq-redeploy
+
+on:
+  workflow_dispatch:
+    inputs:
+        files:
+          required: true
+          type: string
+          description: "Files to re-deploy"
+jobs:
+  connect:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: auth
+        name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+
+      - name: BQ Re-Deployment
+        run: |
+          pip install -r .github/workflows/requirements.txt
+          errors=$(python .github/workflows/bq_deploy.py --env="dev" --configs="project_id=telus-tir-project" --location="us" --files="${{ github.event.inputs.files }}")
+          echo "$errors" >> $GITHUB_STEP_SUMMARY
