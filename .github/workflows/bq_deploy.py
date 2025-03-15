@@ -139,13 +139,13 @@ if __name__ == "__main__":
         # Process all changed files
         changed_files = read_file_paths(all_changed_files_path)
         print("Processing changed SQL files:")
-        output_process = process_sql_files(changed_files)
+        process_sql_files(changed_files)
         
         # Process renamed files (if needed)
         renamed_files = read_file_paths(renamed_files_path)
         if renamed_files:
             print("\nProcessing renamed SQL files:")
-            output_rename = process_sql_files(renamed_files)
+            process_sql_files(renamed_files)
         print("Final")
         print(error_list)
         #output_process.extend(output_rename)
