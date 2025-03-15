@@ -147,8 +147,6 @@ if __name__ == "__main__":
             print("\nProcessing renamed SQL files:")
             process_sql_files(renamed_files)
 
-        if error_list:
-            print("\nRe-deploy errors")
-            process_sql_files(error_list)
+
 
         
