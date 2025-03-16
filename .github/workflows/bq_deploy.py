@@ -156,7 +156,7 @@ if __name__ == "__main__":
             print("\nRe-deploy errors:")
             process_sql_files(error_copy)
 
-        print(f"Error re-deploy {length(error_list)}")
+        print(f"Error re-deploy {len(error_list)}")
 
 
         
