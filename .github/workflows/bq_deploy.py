@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
 
     if error_list:
-        sys.exit(1)
+        exit(10)
         
 
 
