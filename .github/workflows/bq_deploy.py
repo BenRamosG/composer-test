@@ -1,4 +1,3 @@
-import sys
 import os
 import json
 from google.cloud import bigquery
@@ -46,8 +45,6 @@ def run_query(sql, project_id, configs, file=None):
     """
     try:
         # sql_query = read_sql(sql).format(**configs)
-        sys.stderr.write(f"Project_id: {project_id}")
-        sys.stdout.flush()
         print(f"Project_id: {project_id}")
         print(f"Path: {file}") #BDRJ
         print(f"Running Query: {sql}")
@@ -159,10 +156,3 @@ if __name__ == "__main__":
             print("\nRe-deploy errors:")
             process_sql_files(error_copy)
 
-
-    if error_list:
-        sys.exit(1)
-        
-
-
-        
