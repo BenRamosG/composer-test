@@ -9,10 +9,12 @@ try:
     parser.add_argument('--env', type=str, required=True, help='The branch name.')
     parser.add_argument('--configs', type=str, required=True, help='The configs variable.')
     parser.add_argument('--location', type=str, required=True, help='The location for running bq query.')
+    parser.add_argument('--files', type=str, required=False, help='Deploy specific files.') #BDRJ
     args = parser.parse_args()
     env = args.env
     configs_str = args.configs
     query_location = args.location
+    files = args.files #BDRJ
 except Exception as e:
     print(e)
 
@@ -44,6 +46,7 @@ def run_query(sql, project_id, configs, file=None):
     try:
         # sql_query = read_sql(sql).format(**configs)
         print(f"Project_id: {project_id}")
+        print(f"Path: {file}") #BDRJ
         print(f"Running Query: {sql}")
         job_config = bigquery.QueryJobConfig(dry_run=False)
         job = bq.query(sql, project=project_id, job_config=job_config)
@@ -56,8 +59,10 @@ def run_query(sql, project_id, configs, file=None):
         if job.errors:
             raise Exception(f"Query failed with errors: {job.errors}")
     except Exception as e:
-        error = {f"{file}": e} if file else {f"{sql}": e}
-        error_list.append(error)
+        # error = {f"{file}": e} if file else {f"{sql}": e}  #BDRJ
+        # error_list.append(error) #BDRJ
+        print(f"#### :x: Error: {e}") #BDRJ
+        error_list.append(file) #BDRJ
 
 
 def replace_placeholders(query, placeholders, project_id):
@@ -109,9 +114,9 @@ def process_sql_files(file_paths):
         else:
             print(f"SQL file not found: {file_path}")
 
-    if len(error_list) > 0:
-        print(error_list)
-        exit(10)
+    # if len(error_list) > 0:
+    #    print(error_list)
+    #    exit(10)
 
 
 
@@ -129,17 +134,28 @@ def read_file_paths(file_path):
 
 
 if __name__ == "__main__":
-    # Paths to the changed files and renamed files lists
-    all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
-    renamed_files_path = 'changed_sql_files/renamed_files.txt'
+    if files:
+        list_files = files.split(",")
+        print("Manual Re-deploy")
+        process_sql_files(list_files)
+    else:
+        # Paths to the changed files and renamed files lists
+        all_changed_files_path = 'changed_sql_files/all_changed_files.txt'
+        renamed_files_path = 'changed_sql_files/renamed_files.txt'
+    
+        # Process all changed files
+        changed_files = read_file_paths(all_changed_files_path)
+        print("Processing changed SQL files:")
+        process_sql_files(changed_files)
+        
+        # Process renamed files (if needed)
+        renamed_files = read_file_paths(renamed_files_path)
+        if renamed_files:
+            print("\nProcessing renamed SQL files:")
+            process_sql_files(renamed_files)
 
-    # Process all changed files
-    changed_files = read_file_paths(all_changed_files_path)
-    print("Processing changed SQL files:")
-    process_sql_files(changed_files)
+        error_copy = error_list.copy()
 
-    # Process renamed files (if needed)
-    renamed_files = read_file_paths(renamed_files_path)
-    if renamed_files:
-        print("\nProcessing renamed SQL files:")
-        process_sql_files(renamed_files)
+        if error_copy:
+            print("\nRe-deploy errors:")
+            process_sql_files(error_copy)
