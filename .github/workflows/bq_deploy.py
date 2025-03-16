@@ -150,10 +150,13 @@ if __name__ == "__main__":
             process_sql_files(renamed_files)
 
         error_copy = error_list.copy()
+        error_list = []
 
         if error_copy:
             print("\nRe-deploy errors:")
             process_sql_files(error_copy)
+
+        print(f"Error re-deploy {length(error_list)}"
 
 
         
