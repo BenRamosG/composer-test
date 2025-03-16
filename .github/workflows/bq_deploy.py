@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 from google.cloud import bigquery
@@ -158,7 +159,7 @@ if __name__ == "__main__":
 
 
     if error_list:
-        exit(10)
+        sys.exit(1)
         
 
 
