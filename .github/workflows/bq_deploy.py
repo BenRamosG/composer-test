@@ -46,6 +46,8 @@ def run_query(sql, project_id, configs, file=None):
     """
     try:
         # sql_query = read_sql(sql).format(**configs)
+        sys.stderr.write(f"Project_id: {project_id}")
+        sys.stdout.flush()
         print(f"Project_id: {project_id}")
         print(f"Path: {file}") #BDRJ
         print(f"Running Query: {sql}")
