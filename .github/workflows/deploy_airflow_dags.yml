@@ -137,7 +137,7 @@ jobs:
           versioned_dags_to_deploy=()
 
           if [[ "$DAG_LIST" == '*' ]]; then
-            for file in $(find "$search_dir" -type f -name "$*.py"); do
+            for file in $(find "$search_dir" -type f -name "*.py"); do
               filename=$(basename "$file" .py)
               found_dags+=("$filename") # Append the found file to the array
             done
@@ -147,7 +147,7 @@ jobs:
             # Iterate through the array
             for item in "${dags_to_deploy[@]}"; do
               # Search for files with the given name and .py extension recursively
-              for file in $(find "$search_dir" -type f -name "$item.py"); do
+              for file in $(find "$search_dir" -type f -name "*/dags/$item.py"); do
                 filename=$(basename "$file" .py)
                 found_dags+=("$filename") # Append the found file to the array
               done
