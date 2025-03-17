@@ -102,16 +102,24 @@ jobs:
         id: deployscript
         run: |
           echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
-          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || echo "Got error: $CURRENT_DAGS_VS"
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || \
+          CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
 
           # Handle variable not existing sceneario
           if [[ "$CURRENT_DAGS_VS" == *"Variable dags_version does not exist"* ]]; then
             echo "::warning::Variable dags_version did not exist in Airflow environment. This process will recreate it. If this is not your first run review why it has been deleted."
             # Create var with dags vs being deployed
             exit 0
-          
-          else
-              echo "Error was: $CURRENT_DAGS_VS"
-              exit 1 # There was a different type of error
+
+          else          
+            if [[ $? -ne 0 ]]; then
+              echo "::error::gcloud command failed: $CURRENT_DAGS_VS" # gcloud command failed for a different reason
+              exit 1
+              
+            else
+              echo "$CURRENT_DAGS_VS" # Variable exists, get the output
+              exit 0
+              
+            fi
 
           fi
