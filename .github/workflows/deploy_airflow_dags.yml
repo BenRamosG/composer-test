@@ -102,7 +102,7 @@ jobs:
         id: deployscript
         run: |
           echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
-          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version) || echo "Got error: $CURRENT_DAGS_VS"
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || echo "Got error: $CURRENT_DAGS_VS"
 
           # Handle variable not existing sceneario
           if [[ "$CURRENT_DAGS_VS" == *"Variable dags_version does not exist"* ]]; then
