@@ -152,7 +152,7 @@ jobs:
           done
 
           echo "Found DAGs outside loop"
-          echo '$found_dags' # Space separated list
+          echo "${found_dags[@]}" # Space separated list
 
           # Iterate through the array of found dags
           if [[ ${#found_dags[@]} -gt 0 ]]; then
@@ -166,7 +166,7 @@ jobs:
               exit 1
           fi
 
-          echo '$versioned_dags_to_deploy' # Space separated list
+          echo "${versioned_dags_to_deploy[@]}" # Space separated list
 
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Create dags version var"
