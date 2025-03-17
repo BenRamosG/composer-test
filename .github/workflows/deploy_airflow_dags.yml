@@ -206,7 +206,7 @@ jobs:
 
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Creating dags_version var: $deploying_dags_json"
-            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version '$deploying_dags_json'
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
 
           else
             echo "Updating dags_version var"
@@ -215,6 +215,6 @@ jobs:
             updated_dags_json=$(jq -s '.[1] * .[0]' <<< "$current_dags_jq"$'\n'"$deploy_dags_jq") # Use jq to merge and update JSON objects
 
             echo "Will update to: $updated_dags_json"
-            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version '$updated_dags_json'
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$updated_dags_json"
 
           fi
