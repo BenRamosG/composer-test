@@ -22,6 +22,8 @@ on:
   
 jobs:
   deploy-dags:
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
 
@@ -84,8 +86,8 @@ jobs:
         id: master_variables
         uses: ./.github/actions/master-variables
 
-      - id: auth
-        name: Google Cloud Auth
+      - name: Google Cloud Auth
+        id: auth
         uses: google-github-actions/auth@v2
         with:
           create_credentials_file: true
