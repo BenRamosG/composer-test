@@ -115,12 +115,12 @@ jobs:
             FLAG_CREATE_DAGS_VS="true"
 
           else          
-            if [[ $? -ne 0 ]]; then
+            if [[ "$CURRENT_DAGS_VS" =~ ^\{".*"\}$ ]]; then # If response matches a JSON format {" some json content "}
+              echo "Found current DAGs version: $CURRENT_DAGS_VS" # Variable exists, get the output
+
+            else
               echo "::error::gcloud command failed: $CURRENT_DAGS_VS" # gcloud command failed for a different reason
               exit 1
-              
-            else
-              echo "$CURRENT_DAGS_VS" # Variable exists, get the output
               
             fi
 
