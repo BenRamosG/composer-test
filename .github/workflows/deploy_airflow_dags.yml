@@ -142,7 +142,9 @@ jobs:
           for item in "${dags[@]}"; do
             # Search for files with the given name and .py extension recursively
             find "$search_dir" -type f -name "$item.py" -print0 | while IFS= read -r -d $'\0' file; do
-              found_dags+=("$file") # Append the found file to the array
+              echo "Found DAG at $file"
+              filename=$(basename "$file")
+              found_dags+=("$filename") # Append the found file to the array
             done
           done
 
