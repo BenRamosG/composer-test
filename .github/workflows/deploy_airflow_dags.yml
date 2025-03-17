@@ -149,7 +149,7 @@ jobs:
               # Search for files with the given name and .py extension recursively
               for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
                 echo "Looking for: "
-                echo ""*/${item}/dags/${item}.py"
+                echo "*/${item}/dags/${item}.py"
                 filename=$(basename "$file" .py)
                 found_dags+=("$filename") # Append the found file to the array
               done
