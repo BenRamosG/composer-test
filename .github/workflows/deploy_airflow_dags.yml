@@ -186,28 +186,29 @@ jobs:
 
 
           # Create JSON string to update Airflow dags_version variable
-          DEPLOYING_DAGS_JSON="{"
+          deploying_dags_json="{"
           for i in "${!found_dags[@]}"; do
             key="${found_dags[$i]}"
             value="${versioned_dags_to_deploy[$i]}"
 
             # Add comma separator (except for the last element)
             if [[ $i -lt $(( ${#found_dags[@]} - 1 )) ]]; then
-              DEPLOYING_DAGS_JSON+="\"$key\":\"$value\","
+              deploying_dags_json+="\"$key\":\"$value\","
             else
-              DEPLOYING_DAGS_JSON+="\"$key\":\"$value\""
+              deploying_dags_json+="\"$key\":\"$value\""
             fi
           done
-          DEPLOYING_DAGS_JSON+="}"
+          deploying_dags_json+="}"
 
-          echo "JSON String: $DEPLOYING_DAGS_JSON"
+          echo "JSON String: $deploying_dags_json"
 
           
-          deploy_dags_jq=$(echo "$DEPLOYING_DAGS_JSON" | jq -c '.') # Convert JSON string to jq-readable format
+          deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format
           
 
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Creating dags_version var"
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version $deploying_dags_json
 
           else
             echo "Updating dags_version var"
@@ -216,5 +217,6 @@ jobs:
             updated_dags_json=$(jq -s '.[1] * .[0]' <<< "$current_dags_jq"$'\n'"$deploy_dags_jq") # Use jq to merge and update JSON objects
 
             echo "Will update to: $updated_dags_json"
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version $updated_dags_json
 
           fi
