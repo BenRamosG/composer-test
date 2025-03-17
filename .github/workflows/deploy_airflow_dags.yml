@@ -101,7 +101,9 @@ jobs:
       - name: Deploy DAGs
         id: deployscript
         run: |
-          echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
+
+          echo "Fetching Airflow DAG Versions variable"
+          FLAG_CREATE_DAGS_VS="false"
           CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || \
           CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
 
@@ -109,7 +111,8 @@ jobs:
           if [[ "$CURRENT_DAGS_VS" == *"Variable dags_version does not exist"* ]]; then
             echo "::warning::Variable dags_version did not exist in Airflow environment. This process will recreate it. If this is not your first run review why it has been deleted."
             # Create var with dags vs being deployed
-            exit 0
+            
+            FLAG_CREATE_DAGS_VS="true"
 
           else          
             if [[ $? -ne 0 ]]; then
@@ -118,8 +121,49 @@ jobs:
               
             else
               echo "$CURRENT_DAGS_VS" # Variable exists, get the output
-              exit 0
               
             fi
+
+          fi
+
+          DAG_ID_SUFFIX=${{ steps.deployref.outputs.dags_concat_id }}
+          echo "DAGs will be added suffix: $DAG_ID_SUFFIX"
+          DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
+          echo "DAGs to deploy: $DAG_LIST"
+
+
+          # Convert comma-separated string to an array
+          IFS=',' read -ra dags <<< "$DAG_LIST"
+          search_dir="composer/**/dags"
+          found_dags=()
+          versioned_dags_to_deploy=()
+
+          # Iterate through the array
+          for item in "${dags[@]}"; do
+            # Search for files with the given name and .py extension recursively
+            find "$search_dir" -type f -name "$item.py" -print0 | while IFS= read -r -d $'\0' file; do
+              found_dags+=("$file") # Append the found file to the array
+            done
+          done
+
+          # Iterate through the array of found dags
+          if [[ ${#found_dags[@]} -gt 0 ]]; then
+              echo "Found files:"
+              for found_dag in "${found_dags[@]}"; do
+                  echo "$found_dag"
+                  versioned_dags_to_deploy+=("${found_dag}_${DAG_ID_SUFFIX}")
+              done
+          else
+              echo "::error::No matching DAG files found. Review your repository files"
+              exit 1
+          fi
+
+          echo "$versioned_dags_to_deploy"
+
+          if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
+            echo "Create dags version var"
+
+          else
+            echo "Update dags version var"
 
           fi
