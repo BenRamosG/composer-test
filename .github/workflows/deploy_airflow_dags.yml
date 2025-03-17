@@ -142,17 +142,17 @@ jobs:
           for item in "${dags[@]}"; do
             # Search for files with the given name and .py extension recursively
             for file in $(find "$search_dir" -type f -name "$item.py"); do
-              echo "Found DAG at $file"
+              #echo "Found DAG at $file"
               filename=$(basename "$file" .py)
-              echo "Add $filename to deploying DAGs list."
+              #echo "Add $filename to deploying DAGs list."
               found_dags+=("$filename") # Append the found file to the array
-              echo "Found DAGs at loop"
-              echo "$found_dags"
+              #echo "Found DAGs at loop"
+              #echo "$found_dags"
             done
           done
 
           echo "Found DAGs outside loop"
-          echo "$found_dags"
+          echo '$found_dags' # Space separated list
 
           # Iterate through the array of found dags
           if [[ ${#found_dags[@]} -gt 0 ]]; then
@@ -166,7 +166,7 @@ jobs:
               exit 1
           fi
 
-          echo "$versioned_dags_to_deploy"
+          echo '$versioned_dags_to_deploy' # Space separated list
 
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Create dags version var"
