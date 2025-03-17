@@ -171,6 +171,19 @@ jobs:
           echo "DAGs will be deployed as:"
           echo "${versioned_dags_to_deploy[@]}" # Space separated list
 
+          # Create a JSON object using jq with a loop
+          json_string=$(
+            jq -n \
+            --argjson found_dags "$(printf '%s\n' "${found_dags[@]}" | jq -R -s -c '[inputs]')"\
+            --argjson versioned_dags_to_deploy "$(printf '%s\n' "${versioned_dags_to_deploy[@]}" | jq -R -s -c '[inputs]')"\
+            '
+            reduce range(0, $found_dags | length) as $i ({}; .[$found_dags[$i]] = $versioned_dags_to_deploy[$i])
+            '
+          )
+
+          # Print the JSON string (for debugging)
+          echo "JSON String: $json_string"
+
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Create dags version var"
 
