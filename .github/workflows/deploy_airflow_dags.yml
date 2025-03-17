@@ -153,6 +153,19 @@ jobs:
               done
             done
 
+            # Force to add master DAG to deploy list if it wasn't present
+            master_found=false
+            for elements in "${found_dags[@]}"; do
+              if [[ "$elements" == "master" ]]; then
+                master_found=true
+                break
+              fi
+            done
+
+            if [[ "$master_found" == false ]]; then
+              found_dags+=("master")
+            fi
+
           fi
 
           echo "DAGs found in repo"
