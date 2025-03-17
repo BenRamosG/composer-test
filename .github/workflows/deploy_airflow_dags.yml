@@ -102,7 +102,7 @@ jobs:
         id: deployscript
         run: |
           echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
-          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables ge -- dags_version 2>&1) || \
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || \
           CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
 
           # Handle variable not existing sceneario
