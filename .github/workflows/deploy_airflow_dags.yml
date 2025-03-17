@@ -146,8 +146,13 @@ jobs:
               filename=$(basename "$file" .py)
               echo "Add $filename to deploying DAGs list."
               found_dags+=("$filename") # Append the found file to the array
+              echo "Found DAGs at loop"
+              echo "$found_dags"
             done
           done
+
+          echo "Found DAGs outside loop"
+          echo "$found_dags"
 
           # Iterate through the array of found dags
           if [[ ${#found_dags[@]} -gt 0 ]]; then
