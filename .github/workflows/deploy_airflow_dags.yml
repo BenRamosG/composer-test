@@ -132,33 +132,26 @@ jobs:
           echo "DAGs to deploy: $DAG_LIST"
 
 
-          # Convert comma-separated string to an array
-          IFS=',' read -ra dags <<< "$DAG_LIST"
+          IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
           search_dir="$GITHUB_WORKSPACE/composer"
           found_dags=()
           versioned_dags_to_deploy=()
 
           # Iterate through the array
-          for item in "${dags[@]}"; do
+          for item in "${dags_to_deploy[@]}"; do
             # Search for files with the given name and .py extension recursively
             for file in $(find "$search_dir" -type f -name "$item.py"); do
-              #echo "Found DAG at $file"
               filename=$(basename "$file" .py)
-              #echo "Add $filename to deploying DAGs list."
               found_dags+=("$filename") # Append the found file to the array
-              #echo "Found DAGs at loop"
-              #echo "$found_dags"
             done
           done
 
-          echo "Found DAGs outside loop"
+          echo "DAGs found in repo"
           echo "${found_dags[@]}" # Space separated list
 
-          # Iterate through the array of found dags
+          # Iterate through the array of found dags to add deploy-specific ID
           if [[ ${#found_dags[@]} -gt 0 ]]; then
-              echo "Found files:"
               for found_dag in "${found_dags[@]}"; do
-                  echo "$found_dag"
                   versioned_dags_to_deploy+=("${found_dag}_${DAG_ID_SUFFIX}")
               done
           else
@@ -166,6 +159,7 @@ jobs:
               exit 1
           fi
 
+          echo "DAGs will be deployed as:"
           echo "${versioned_dags_to_deploy[@]}" # Space separated list
 
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
