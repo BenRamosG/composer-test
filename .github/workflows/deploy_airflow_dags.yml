@@ -132,19 +132,28 @@ jobs:
           echo "DAGs to deploy: $DAG_LIST"
 
 
-          IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
           search_dir="$GITHUB_WORKSPACE/composer"
           found_dags=()
           versioned_dags_to_deploy=()
 
-          # Iterate through the array
-          for item in "${dags_to_deploy[@]}"; do
-            # Search for files with the given name and .py extension recursively
-            for file in $(find "$search_dir" -type f -name "$item.py"); do
+          if [[ "$DAG_LIST" == '*' ]]; then
+            for file in $(find "$search_dir" -type f -name "$*.py"); do
               filename=$(basename "$file" .py)
               found_dags+=("$filename") # Append the found file to the array
             done
-          done
+
+          else
+            IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
+            # Iterate through the array
+            for item in "${dags_to_deploy[@]}"; do
+              # Search for files with the given name and .py extension recursively
+              for file in $(find "$search_dir" -type f -name "$item.py"); do
+                filename=$(basename "$file" .py)
+                found_dags+=("$filename") # Append the found file to the array
+              done
+            done
+
+          fi
 
           echo "DAGs found in repo"
           echo "${found_dags[@]}" # Space separated list
