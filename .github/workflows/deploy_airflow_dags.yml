@@ -214,7 +214,24 @@ jobs:
             current_dags_jq=$(echo "$CURRENT_DAGS_VS" | jq -c '.') # Convert JSON string to jq-readable format
             updated_dags_json=$(jq -s '.[1] * .[0]' <<< "$current_dags_jq"$'\n'"$deploy_dags_jq") # Use jq to merge and update JSON objects
 
+            deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
+
             echo "Will update to: $updated_dags_json"
-            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$updated_dags_json"
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
 
           fi
+
+
+          # Deploy master DAG first. Once master has updated with latest versions of rest of the DAGs, then deploys the rest.
+          master_path="$GITHUB_WORKSPACE/composer/master/dags/master.py"
+          master_content=$(cat "$master_path")
+
+          while IFS='=' read -r key value; do
+              key=${key%:} # remove the last colon character
+              master_content=$(echo "$master_content" | sed "s/trigger_dag_id=\"$key\"/trigger_dag_id=\"$value\"/g")
+          done < <(echo "$deploying_dags_json" | jq -r 'to_entries[] | .key + "=" + .value')
+
+          # Output the updated master.py content
+          cat <<EOF
+          $master_content
+          EOF
