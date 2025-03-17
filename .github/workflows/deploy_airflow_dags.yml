@@ -114,7 +114,8 @@ jobs:
             
             FLAG_CREATE_DAGS_VS="true"
 
-          else          
+          else
+            CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
             if [[ "$CURRENT_DAGS_VS" =~ ^\{".*"\}$ ]]; then # If response matches a JSON format {" some json content "}
               echo "Found current DAGs version: $CURRENT_DAGS_VS" # Variable exists, get the output
 
