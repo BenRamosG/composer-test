@@ -80,7 +80,36 @@ jobs:
           fi
 
 
+      - name: Retrieve variables from master.json
+        id: master_variables
+        uses: ./.github/actions/master-variables
+
+      - name: Set GCP environment variables
+        id: gcp-env-vars
+        outputs:
+          composer_environment_name: ${{ steps.master_variables.outputs.composer_environment_name }}
+          composer_gcs_bucket: ${{ steps.master_variables.outputs.composer_gcs_bucket }}
+          region: ${{ steps.master_variables.outputs.region }}
+
+      - name: Google Cloud Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: Set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+
       - name: Deploy DAGs
         id: deployscript
         run: |
           echo "DAGs to deploy: ${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
+          echo "Test GCP env vars"
+          echo "${{ steps.gcp-env-vars.outputs.composer_environment_name }}"
+          echo "${{ steps.gcp-env-vars.outputs.region }}"
+          echo "$${{ steps.gcp-env-vars.outputs.composer_gcs_bucket }}"
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.gcp-env-vars.outputs.composer_environment_name }} --location=${{ steps.gcp-env-vars.outputs.region }} variables get -- dags_version)
+          echo "$CURRENT_DAGS_VS"
