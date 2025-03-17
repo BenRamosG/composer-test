@@ -141,7 +141,7 @@ jobs:
           # Iterate through the array
           for item in "${dags[@]}"; do
             # Search for files with the given name and .py extension recursively
-            find "$search_dir" -type f -name "$item.py" -print0 | while IFS= read -r -d $'\0' file; do
+            for file in $(find "$search_dir" -type f -name "$item.py"); do
               echo "Found DAG at $file"
               filename=$(basename "$file" .py)
               echo "Add $filename to deploying DAGs list."
