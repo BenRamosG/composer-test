@@ -134,7 +134,7 @@ jobs:
 
           # Convert comma-separated string to an array
           IFS=',' read -ra dags <<< "$DAG_LIST"
-          search_dir="composer/**/dags"
+          search_dir="$GITHUB_WORKSPACE/composer"
           found_dags=()
           versioned_dags_to_deploy=()
 
