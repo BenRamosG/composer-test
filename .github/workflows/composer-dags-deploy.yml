@@ -198,6 +198,8 @@ jobs:
           for element in "${found_dags_complete[@]}"; do
             echo "$element"
             python modify_dag_version.py "$element" "${{ steps.get-gitref.outputs.git_ref }}"
+
+            cat "$element"
           done
         
           
