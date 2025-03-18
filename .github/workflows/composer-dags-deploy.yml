@@ -1,0 +1,65 @@
+name: Composer Dags Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+    
+      dags_to_deploy:
+        description: "Enter * to deploy all DAGs. Otherwise provide a comma separated list of DAG names to deploy. Master DAG is always deployed."
+        required: true
+        type: string
+
+jobs:
+  deploy-dags:
+  
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: Validate input parameters
+        id: validate-deploy-inputs
+        run: |
+          
+          DAGS_TO_DEPLOY=${{ github.event.inputs.dags_to_deploy }}
+
+          if [[ "$DAGS_TO_DEPLOY" == "*" ]]; then
+            echo "All DAGs will be deployed."
+            echo "dags_to_deploy=$DAGS_TO_DEPLOY" >> $GITHUB_OUTPUT
+
+          else
+            # Regex to validate the input string
+            regex="^([a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+)*$"
+
+            if ! [[ "$DAGS_TO_DEPLOY" =~ $regex ]]; then
+              echo "::error::Input string contains invalid characters or format. Only alphanumeric and underscore characters are allowed. Values must be comma-separated with no whitespaces."
+              exit 1
+            else
+              echo "dags_to_deploy=$DAGS_TO_DEPLOY" >> "$GITHUB_OUTPUT"
+            fi
+
+          fi
+      
+      - name: Take Git reference
+        id: get-gitref
+        run: |
+          if [[ "${{ github.ref }}" == *"tags"* ]]; then
+            ref="$base"
+          else
+            ref="$base-$sh_short"
+          fi
+          
+          echo "git_ref=$ref" >> $GITHUB_OUTPUT
+
+
+      - name: Retrieve variables from master.json
+        id: master-variables
+        uses: ./.github/actions/master-variables
+
+
+      - name: Print
+        run: |
+          echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
+          echo "${{ steps.get-gitref.outputs.git_ref }}"
+          
