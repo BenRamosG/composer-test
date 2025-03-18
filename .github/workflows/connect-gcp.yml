@@ -30,16 +30,23 @@ jobs:
         run: gsutil ls
 
 
-      - name: Print GitRef
+      - name: Take Git Ref
+        id: get-ref
         run: |
-          echo "Selected git reference: ${{ github.ref }}"
-          echo "SHA: ${{ github.sha }}"
-          
           base=$(basename "${{ github.ref }}")
           sh_short=$(echo "${{ github.sha }}" | cut -c1-7)
           
           if [[ "${{ github.ref }}" == *"tags"* ]]; then
-            echo "$base"
+            ref="$base"
           else
-            echo "$base-$sh_short"
+            ref="$base-$sh_short"
           fi
+
+          echo "git_ref=$ref" >> $GITHUB_OUTPUT
+
+
+      - name: Print
+        run: |
+          echo "${{ steps.get-ref.outputs.git_ref }}"
+
+          
