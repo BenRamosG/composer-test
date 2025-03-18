@@ -10,7 +10,7 @@ on:
         type: string
 
 jobs:
-  deploy-dags:
+  deploy-new-versions:
   
     permissions:
       id-token: write
@@ -194,7 +194,11 @@ jobs:
 
           fi
 
-          echo "Last versions: $deploying_dags_json"
+
+          for i in "${!found_dags_complete[@]}"; do
+            echo $i
+          done
+        
           
       - name: Print
         run: |
