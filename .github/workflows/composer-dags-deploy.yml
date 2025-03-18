@@ -82,8 +82,8 @@ jobs:
         run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
 
-      - name: Deploy DAGs
-        id: deployscript
+      - name: New versions
+        id: new-versions
         run: |
           
           echo "Fetching Airflow DAG Versions variable"
@@ -196,14 +196,16 @@ jobs:
 
           fi
 
-
-          # Modify dag_version with github reference
-          for element in "${found_dags_complete[@]}"; do
+          echo "dags_path=$found_dags_complete" >> $GITHUB_OUTPUT
+          
+      - name: Modify dag_version
+        run: |
+          dags="${{ steps.new-versions.outputs.dags_path }}"
+          for element in "${dags[@]}"; do
             echo "$element"
             python modify_dag_version.py "$element" "${{ steps.get-gitref.outputs.git_ref }}"
           done
 
-          
       - name: Configure Git User
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -218,7 +220,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        
+
       - name: Print
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
