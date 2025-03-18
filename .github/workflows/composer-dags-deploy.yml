@@ -190,7 +190,7 @@ jobs:
             
             deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
 
-            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
+            gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
 
           fi
 
