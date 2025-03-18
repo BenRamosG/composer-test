@@ -173,6 +173,8 @@ jobs:
           
           deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format       
 
+          echo "ACTUALIZADAS $deploy_dags_jq"
+
           if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
             echo "Creating dags_version var: $deploying_dags_json"
             gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
