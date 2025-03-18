@@ -28,3 +28,18 @@ jobs:
       - name: Read buckets
         shell: bash
         run: gsutil ls
+
+
+      - name: Print GitRef
+        run: |
+          echo "Selected git reference: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          
+          base=$(basename "${{ github.ref }}")
+          sh_short=$(echo "${{ github.sha }}" | cut -c1-7)
+          
+          if [[ "${{ github.ref }}" == *"tags"* ]]; then
+            echo "$base"
+          else
+            echo "$base-$sh_short"
+          fi
