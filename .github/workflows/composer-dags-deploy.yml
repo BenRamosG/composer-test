@@ -86,7 +86,7 @@ jobs:
           
           echo "Fetching Airflow DAG Versions variable"
           FLAG_CREATE_DAGS_VS="false"
-          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || \
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} variables get -- dags_version 2>&1) || \
           CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
 
           echo "$CURRENT_DAGS_VS"
