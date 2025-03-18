@@ -114,6 +114,30 @@ jobs:
           DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
           echo "DAGs to deploy: $DAG_LIST"
 
+          # Find path DAGs to process
+          search_dir="$GITHUB_WORKSPACE/composer"
+          found_dags=()
+          versioned_dags_to_deploy=()
+
+          if [[ "$DAG_LIST" == '*' ]]; then
+            for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
+              filename=$(basename "$file" .py)
+              found_dags+=("$filename") # Append the found file to the array
+            done
+
+          else
+            IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
+            # Iterate through the array
+            for item in "${dags_to_deploy[@]}"; do
+              # Search for files with the given name and .py extension recursively
+              for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
+                filename=$(basename "$file" .py)
+                found_dags+=("$filename") # Append the found file to the array
+              done
+            done
+
+          echo "Files: $found_dags"
+          
           
       - name: Print
         run: |
