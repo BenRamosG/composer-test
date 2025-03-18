@@ -6,7 +6,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.operators.dummy import DummyOperator
 
 
-dag_version = "1.0.0"
+dag_version = "dev-7906f78"
 
 
 reload_audit_table=f"SELECT 'Execute audit table procedure';"
