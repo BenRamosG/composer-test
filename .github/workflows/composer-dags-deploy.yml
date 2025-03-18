@@ -44,6 +44,9 @@ jobs:
       - name: Take Git reference
         id: get-gitref
         run: |
+          base=$(basename "${{ github.ref }}")
+          sh_short=$(echo "${{ github.sha }}" | cut -c1-7)
+        
           if [[ "${{ github.ref }}" == *"tags"* ]]; then
             ref="$base"
           else
@@ -51,6 +54,13 @@ jobs:
           fi
           
           echo "git_ref=$ref" >> $GITHUB_OUTPUT
+          echo "base_ref=$base" >> $GITHUB_OUTPUT
+
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.get-gitref.outputs.base_ref }}
 
 
       - name: Retrieve variables from master.json
