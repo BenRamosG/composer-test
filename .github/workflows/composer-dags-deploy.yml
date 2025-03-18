@@ -68,6 +68,29 @@ jobs:
         uses: ./.github/actions/master-variables
 
 
+      - name: Google Cloud Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+
+      - name: Set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+
+
+      - name: Deploy DAGs
+        id: deployscript
+        run: |
+          
+          echo "Fetching Airflow DAG Versions variable"
+          FLAG_CREATE_DAGS_VS="false"
+          CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables get -- dags_version 2>&1) || \
+          CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
+
+          echo "$CURRENT_DAGS_VS"
+
       - name: Print
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
