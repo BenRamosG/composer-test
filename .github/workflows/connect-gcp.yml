@@ -34,7 +34,13 @@ jobs:
         run: |
           echo "Selected git reference: ${{ github.ref }}"
           echo "SHA: ${{ github.sha }}"
-          
-          last_part=$(basename "${{ github.ref }}")
-          echo "$last_part"
 
+          last_part=$(basename "${{ github.ref }}")
+          
+          if [[ "${{ github.ref }}" == *"tags"* ]]; then
+            echo "$last_part - ${{ github.sha }}"
+          else
+            echo "$last_part"
+          fi
+
+          
