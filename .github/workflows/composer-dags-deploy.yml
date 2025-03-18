@@ -58,6 +58,8 @@ jobs:
           echo "git_ref=$ref" >> $GITHUB_OUTPUT
           echo "base_ref=$base" >> $GITHUB_OUTPUT
 
+          echo "Git reference selected: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
+
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -98,6 +100,8 @@ jobs:
             
             FLAG_CREATE_DAGS_VS="true"
 
+            echo "dags_version Airflow variable doesn't exist. It will be created. " >> $GITHUB_STEP_SUMMARY
+
           else
             CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
             if [[ "$CURRENT_DAGS_VS" == *"{"*"}"* ]]; then # If response matches a JSON format {}
@@ -106,13 +110,14 @@ jobs:
               echo "::error::gcloud command failed: $CURRENT_DAGS_VS" # gcloud command failed for a different reason
               exit 1
             fi
-
+            echo "dags_version Airflow variable does exist. It will be updated. " >> $GITHUB_STEP_SUMMARY
           fi
 
 
           # Get new version and files to process.
           DAG_ID_SUFFIX=${{ steps.get-gitref.outputs.git_ref }}
           echo "DAGs will be added suffix: $DAG_ID_SUFFIX"
+          echo "DAGs new version will be: $DAG_ID_SUFFIX" >> $GITHUB_STEP_SUMMARY
           DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
           echo "DAGs to deploy: $DAG_LIST"
 
@@ -143,6 +148,7 @@ jobs:
             done
           fi
 
+          echo "DAGs to update: $found_dags" >> $GITHUB_STEP_SUMMARY
           
           # Iterate through the array of found dags to add deploy-specific ID
           if [[ ${#found_dags[@]} -gt 0 ]]; then
@@ -183,8 +189,11 @@ jobs:
             echo "Updating dags_version var"
             current_dags_jq=$(echo "$CURRENT_DAGS_VS" | jq -c '.') # Convert JSON string to jq-readable format
 
+            echo "Current DAGs versions: $current_dags_jq" >> $GITHUB_STEP_SUMMARY
             echo "Current DAGs Version (from Airflow): $current_dags_jq"
             echo "$current_dags_jq" > "current_version.json"
+
+            echo "DAGs versions to update: $deploying_dags_json" >> $GITHUB_STEP_SUMMARY
             echo "New DAGs Version (from Workflow): $deploying_dags_json"
             echo "$deploying_dags_json" > "new_version.json"
             
@@ -193,7 +202,7 @@ jobs:
             deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
 
             gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
-
+            echo "DAGs new version file: $deploying_dags_json" >> $GITHUB_STEP_SUMMARY
           fi
 
           space_separated=$(IFS=' '; echo "${found_dags_complete[*]}")
@@ -203,7 +212,9 @@ jobs:
         run: |
           dags="${{ steps.new-versions.outputs.dags_path }}"
           for path in $dags; do
+            file_name=$(basename "$path" .py)
             python modify_dag_version.py "$path" "${{ steps.get-gitref.outputs.git_ref }}"
+            echo "$file DAGs updated version to: ${{ steps.get-gitref.outputs.git_ref }} " >> $GITHUB_STEP_SUMMARY
           done
 
       - name: Configure Git User
@@ -228,6 +239,7 @@ jobs:
           for path in $dags; do
             file_name=$(basename "$path" .py)
             gcloud storage cp "$path" ${{ steps.master-variables.outputs.composer_gcs_bucket }}/$file_name/dags/
+            echo "$path move into: ${{ steps.master-variables.outputs.composer_gcs_bucket }} " >> $GITHUB_STEP_SUMMARY
           done
 
 
