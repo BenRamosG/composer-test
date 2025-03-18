@@ -8,6 +8,7 @@ from airflow.operators.dummy import DummyOperator
 
 dag_version = "1.0.0"
 
+
 reload_audit_table=f"SELECT 'Execute audit table procedure';"
 
 default_args = {
