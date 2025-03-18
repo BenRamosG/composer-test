@@ -108,7 +108,7 @@ jobs:
           fi
 
 
-          # Get new version and file to process.
+          # Get new version and files to process.
           DAG_ID_SUFFIX=${{ steps.get-gitref.outputs.git_ref }}
           echo "DAGs will be added suffix: $DAG_ID_SUFFIX"
           DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
@@ -141,14 +141,20 @@ jobs:
             done
           fi
 
+          
+          # Iterate through the array of found dags to add deploy-specific ID
+          if [[ ${#found_dags[@]} -gt 0 ]]; then
+              for found_dag in "${found_dags[@]}"; do
+                  versioned_dags_to_deploy+=("${found_dag}_${DAG_ID_SUFFIX}")
+              done
+          else
+              echo "::error::No matching DAG files found. Review your repository files"
+              exit 1
+          fi
 
-          for element in "${found_dags_complete[@]}"; do
-            echo "$element"
-          done
+          echo "DAGs will be deployed as:"
+          echo "${versioned_dags_to_deploy[@]}" # Space separated list
 
-           for element in "${found_dags[@]}"; do
-            echo "$element"
-          done
 
           
           
