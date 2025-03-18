@@ -137,7 +137,9 @@ jobs:
           fi
 
 
-          echo "$found_dags[@]"
+          for element in "${found_dags[@]}"; do
+            echo "$element"
+          done
 
           
           
