@@ -170,12 +170,27 @@ jobs:
             fi
           done
           deploying_dags_json+="}"
-
           
           deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format       
 
+          if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
+            echo "Creating dags_version var: $deploying_dags_json"
+            gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
 
-          echo "$deploy_dags_jq"
+          else
+            echo "Updating dags_version var"
+            echo "Current DAGs Version (from Airflow): $CURRENT_DAGS_VS"
+            current_dags_jq=$(echo "$CURRENT_DAGS_VS" | jq -c '.') # Convert JSON string to jq-readable format
+            updated_dags_json=$(jq -s '.[1] * .[0]' <<< "$current_dags_jq"$'\n'"$deploy_dags_jq") # Use jq to merge and update JSON objects
+
+            deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
+
+            echo "Will update to: $updated_dags_json"
+            #gcloud composer environments run ${{ steps.master_variables.outputs.composer_environment_name }} --location=${{ steps.master_variables.outputs.region }} variables set -- dags_version "$deploying_dags_json"
+
+          fi
+
+          echo "Last versions: $deploying_dags_json"
           
       - name: Print
         run: |
