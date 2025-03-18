@@ -122,8 +122,7 @@ jobs:
 
           if [[ "$DAG_LIST" == '*' ]]; then
             for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
-              filename=$(basename "$file" .py)
-              found_dags+=("$filename") # Append the found file to the array
+              found_dags+=("$file") # Append the found file to the array
             done
 
           else
@@ -132,14 +131,13 @@ jobs:
             for item in "${dags_to_deploy[@]}"; do
               # Search for files with the given name and .py extension recursively
               for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
-                filename=$(basename "$file" .py)
-                found_dags+=("$filename") # Append the found file to the array
+                found_dags+=("$file") # Append the found file to the array
               done
             done
           fi
 
 
-          echo "$found_dags"
+          echo "$found_dags[@]"
 
           
           
