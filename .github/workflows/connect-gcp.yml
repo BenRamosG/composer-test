@@ -40,7 +40,7 @@ jobs:
           if [[ "${{ github.ref }}" == *"tags"* ]]; then
             echo "$last_part"
           else
-            echo "$last_part - ${{ github.sha }}"
+            echo "$last_part-${{ github.sha.substring(0, 7) }}"
           fi
 
           
