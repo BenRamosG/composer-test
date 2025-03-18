@@ -33,17 +33,12 @@ jobs:
       - name: Take Git Ref
         id: get-ref
         run: |
-          if [[ "${{ github.ref }}" == *"tags"* ]]; then
-            ref="$base"
-          else
-            ref="$base-$sh_short"
-          fi
+          dag_list="groups,customers"
+
+          IFS=',' read -ra dags_to_deploy <<< "$dag_list"
+
+          echo "$dags_to_deploy"
           
-          echo "git_ref=$ref" >> $GITHUB_OUTPUT
 
-
-      - name: Print
-        run: |
-          echo "${{ steps.get-ref.outputs.git_ref }}"
 
           
