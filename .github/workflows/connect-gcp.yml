@@ -28,3 +28,11 @@ jobs:
       - name: Read buckets
         shell: bash
         run: gsutil ls
+
+
+      - name: Print GitRef
+        run: |
+          echo "Selected git reference: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          
+          
