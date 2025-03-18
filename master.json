@@ -1,0 +1,10 @@
+{
+    "project_id": "",
+    "environment": "dev",
+    "region": "us-central1",
+    "composer_gcs_bucket": "gs://us-central1-instance2-ce628860-bucket/dags",
+    "composer_environment_name": "instance2",
+    "master_dag": "my_dag",
+    "master_dag_wait": 1,
+    "master_dag_timeout": 10
+}
