@@ -203,9 +203,23 @@ jobs:
         run: |
           dags="${{ steps.new-versions.outputs.dags_path }}"
           for path in $dags; do
-            echo "Processing path: $path"
+            python modify_dag_version.py "$path" "${{ steps.get-gitref.outputs.git_ref }}"
           done
 
+      - name: Configure Git User
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+      - name: Commit files
+        run: |
+          git add .
+          git commit -m "GITHUB-ACTION: Update version DAG"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print
         run: |
