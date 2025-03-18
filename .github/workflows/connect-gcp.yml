@@ -35,4 +35,6 @@ jobs:
           echo "Selected git reference: ${{ github.ref }}"
           echo "SHA: ${{ github.sha }}"
           
-          
+          last_part=$(basename "${{ github.ref }}")
+          echo "$last_part"
+
