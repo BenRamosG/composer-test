@@ -182,12 +182,12 @@ jobs:
             current_dags_jq=$(echo "$CURRENT_DAGS_VS" | jq -c '.') # Convert JSON string to jq-readable format
 
             echo "Current DAGs Version (from Airflow): $current_dags_jq"
+            echo "$current_dags_jq" > "current_version.json"
             echo "New DAGs Version (from Workflow): $deploying_dags_json"
-
-            #updated_dags_json=$(jq -s '.[0] * .[1]' <<< "$current_dags_jq" <<< "$deploy_dags_jq") # Use jq to merge and update JSON objects
-            jq -s '.[0] * .[1]' "$current_dags_jq" "$deploy_dags_jq" > update.json
-
-
+            echo "$deploying_dags_json" > "new_version.json"
+            
+            updated_dags_json=$(jq -s '.[0] * .[1]' <<< "current_version.json" <<< "new_version.json") # Use jq to merge and update JSON objects
+            
             echo "File updated (from Workflow): $updated_dags_jq"
             
             deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
