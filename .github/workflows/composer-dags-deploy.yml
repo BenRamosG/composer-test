@@ -186,7 +186,7 @@ jobs:
             echo "New DAGs Version (from Workflow): $deploying_dags_json"
             echo "$deploying_dags_json" > "new_version.json"
             
-            updated_dags_json=$(jq -s '.[0] * .[1]' <<< "current_version.json" <<< "new_version.json") # Use jq to merge and update JSON objects
+            updated_dags_json=$(jq -s '.[0] * .[1]' current_version.json new_version.json)
             
             echo "File updated (from Workflow): $updated_dags_jq"
             
