@@ -10,7 +10,6 @@ import time
 import json
 import os
 
-dag_version = "1.0.11"
 
 args = {
      'retries': 3,
@@ -19,7 +18,7 @@ args = {
 
 
 
-with DAG("groups" + "_" +  dag_version,
+with DAG("groups",
          start_date= datetime(2025,3,8),
          schedule= "0 4 * * *",
          catchup= False,
