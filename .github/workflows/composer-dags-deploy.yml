@@ -89,8 +89,32 @@ jobs:
           CURRENT_DAGS_VS=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} variables get -- dags_version 2>&1) || \
           CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
 
-          echo "$CURRENT_DAGS_VS"
+          # Handle variable not existing sceneario
+          if [[ "$CURRENT_DAGS_VS" == *"Variable dags_version does not exist"* ]]; then
+            echo "::warning::Variable dags_version did not exist in Airflow environment. This process will recreate it. If this is not your first run review why it has been deleted."
+            # Create var with dags vs being deployed
+            
+            FLAG_CREATE_DAGS_VS="true"
 
+          else
+            CURRENT_DAGS_VS=$(echo "$CURRENT_DAGS_VS" | grep -v "Executing the command:" | grep -v "Command has been started." | grep -v "Use ctrl-c") # Remove the Airflow server non-relevant response lines
+            if [[ "$CURRENT_DAGS_VS" == *"{"*"}"* ]]; then # If response matches a JSON format {}
+              echo "Found current DAGs version: $CURRENT_DAGS_VS" # Variable exists, get the output
+            else
+              echo "::error::gcloud command failed: $CURRENT_DAGS_VS" # gcloud command failed for a different reason
+              exit 1
+            fi
+
+          fi
+
+
+          # Get new version and file to process.
+          DAG_ID_SUFFIX=${{ steps.get-gitref.outputs.git_ref }}
+          echo "DAGs will be added suffix: $DAG_ID_SUFFIX"
+          DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
+          echo "DAGs to deploy: $DAG_LIST"
+
+          
       - name: Print
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
