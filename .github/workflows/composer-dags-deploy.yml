@@ -202,7 +202,10 @@ jobs:
       - name: Modify dag_version
         run: |
           dags="${{ steps.new-versions.outputs.dags_path }}"
-          echo "$dags"
+          for path in $dags; do
+            echo "Processing path: $path"
+          done
+
 
       - name: Print
         run: |
