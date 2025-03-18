@@ -33,15 +33,12 @@ jobs:
       - name: Take Git Ref
         id: get-ref
         run: |
-          base=$(basename "${{ github.ref }}")
-          sh_short=$(echo "${{ github.sha }}" | cut -c1-7)
-          
           if [[ "${{ github.ref }}" == *"tags"* ]]; then
             ref="$base"
           else
             ref="$base-$sh_short"
           fi
-
+          
           echo "git_ref=$ref" >> $GITHUB_OUTPUT
 
 
