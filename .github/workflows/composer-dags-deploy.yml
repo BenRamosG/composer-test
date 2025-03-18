@@ -126,7 +126,10 @@ jobs:
               found_dags+=("$filename") # Append the found file to the array
             done
           else
-            for item in $(echo "$DAG_LIST" | tr ',' ' '); do
+            IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
+            # Iterate through the array
+            for item in "${dags_to_deploy[@]}"; do
+              # Search for files with the given name and .py extension recursively
               for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
                 filename=$(basename "$file" .py)
                 found_dags+=("$filename") # Append the found file to the array
