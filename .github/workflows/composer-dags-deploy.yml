@@ -156,7 +156,26 @@ jobs:
           echo "${versioned_dags_to_deploy[@]}" # Space separated list
 
 
+          # Create JSON string to update Airflow dags_version variable
+          deploying_dags_json="{"
+          for i in "${!found_dags[@]}"; do
+            key="${found_dags[$i]}"
+            value="${versioned_dags_to_deploy[$i]}"
+
+            # Add comma separator (except for the last element)
+            if [[ $i -lt $(( ${#found_dags[@]} - 1 )) ]]; then
+              deploying_dags_json+="\"$key\":\"$value\","
+            else
+              deploying_dags_json+="\"$key\":\"$value\""
+            fi
+          done
+          deploying_dags_json+="}"
+
           
+          deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format       
+
+
+          echo "$deploy_dags_jq"
           
       - name: Print
         run: |
