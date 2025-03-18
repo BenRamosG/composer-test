@@ -5,6 +5,7 @@ from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.operators.dummy import DummyOperator
 
+dag_version = "1.0.0"
 
 reload_audit_table=f"SELECT 'Execute audit table procedure';"
 
@@ -16,9 +17,10 @@ default_args = {
 }
 
 
+child_dags_ids = {} # Fetch these from the other dag files
 
 
-with DAG("master",
+with DAG("master" + "_" +  dag_version,
 default_args=default_args,
 start_date= datetime(2025,3,12),
 catchup=False,
@@ -27,7 +29,7 @@ schedule='0 4 * * *') as dag:
     
     Groups_process_ = TriggerDagRunOperator(
         task_id = 'groups_process',
-        trigger_dag_id="groups",
+        trigger_dag_id="groups" + "_" + "1.0.11", # Replace for child_dags_ids{"groups"} 
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
@@ -35,7 +37,7 @@ schedule='0 4 * * *') as dag:
 
     Users_process_ = TriggerDagRunOperator(
         task_id = 'users_process',
-        trigger_dag_id="users",
+        trigger_dag_id="users" + "_" + "1.0.3", # Replace for child_dags_ids{"users"}
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
@@ -54,7 +56,7 @@ schedule='0 4 * * *') as dag:
 
     Customers_process_ = TriggerDagRunOperator(
         task_id = 'customers_process',
-        trigger_dag_id="customers",
+        trigger_dag_id="customers" + "_" + "1.1.4", # Replace for child_dags_ids{"customers"}
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
