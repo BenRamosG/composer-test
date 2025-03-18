@@ -221,6 +221,18 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: Dags into GCP
+        run: |
+          dags="${{ steps.new-versions.outputs.dags_path }}"
+          for path in $dags; do
+            file_name=$(basename "$path" .py)
+            gcloud storage cp "$path" ${{ steps.master-variables.outputs.composer_gcs_bucket }}/$file_name/dags/
+          done
+
+
+
+          
       - name: Print
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
