@@ -117,12 +117,15 @@ jobs:
           # Find path DAGs to process
           search_dir="$GITHUB_WORKSPACE/composer"
           found_dags=()
+          found_dags_complete=()
           versioned_dags_to_deploy=()
 
 
           if [[ "$DAG_LIST" == '*' ]]; then
             for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
-              found_dags+=("$file") # Append the found file to the array
+              filename=$(basename "$file" .py)
+              found_dags_complete+=("$file") # Append the found file to the array
+              found_dags+=("$filename") # Append the found file to the array
             done
 
           else
@@ -131,13 +134,19 @@ jobs:
             for item in "${dags_to_deploy[@]}"; do
               # Search for files with the given name and .py extension recursively
               for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
-                found_dags+=("$file") # Append the found file to the array
+                filename=$(basename "$file" .py)
+                found_dags_complete+=("$file") # Append the found file to the array
+                found_dags+=("$filename") # Append the found file to the array
               done
             done
           fi
 
 
-          for element in "${found_dags[@]}"; do
+          for element in "${found_dags_complete[@]}"; do
+            echo "$element"
+          done
+
+           for element in "${found_dags[@]}"; do
             echo "$element"
           done
 
