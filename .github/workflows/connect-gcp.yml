@@ -36,7 +36,7 @@ jobs:
           echo "SHA: ${{ github.sha }}"
           
           base=$(basename "${{ github.ref }}")
-          sh_short=$(echo ${{ github.sha }} | cut -c1-7)"
+          sh_short=$(echo "${{ github.sha }}" | cut -c1-7)
           
           if [[ "${{ github.ref }}" == *"tags"* ]]; then
             echo "$base"
