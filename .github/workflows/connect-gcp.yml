@@ -35,7 +35,10 @@ jobs:
         run: |
           dag_list="groups,customers"
 
-          IFS=',' read -ra dags_to_deploy <<< "$dag_list"
+          for item in $(echo "$dag_list" | tr ',' ' '); do
+            echo "Processing: $item"
+            #Add your logic here for each item
+          done
 
           echo "$dags_to_deploy"
           
