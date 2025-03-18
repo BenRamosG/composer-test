@@ -196,30 +196,13 @@ jobs:
 
           fi
 
-          echo "dags_path=$found_dags_complete" >> $GITHUB_OUTPUT
+          space_separated=$(IFS=' '; echo "${found_dags_complete[*]}")
+          echo "dags_path=$space_separated" >> $GITHUB_OUTPUT
           
       - name: Modify dag_version
         run: |
           dags="${{ steps.new-versions.outputs.dags_path }}"
-          for element in "${dags[@]}"; do
-            echo "$element"
-            python modify_dag_version.py "$element" "${{ steps.get-gitref.outputs.git_ref }}"
-          done
-
-      - name: Configure Git User
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-      - name: Commit files
-        run: |
-          git add .
-          git commit -m "GITHUB-ACTION: Update version DAG"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          echo "$dags"
 
       - name: Print
         run: |
