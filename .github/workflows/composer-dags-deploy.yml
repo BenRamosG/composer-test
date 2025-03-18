@@ -120,6 +120,23 @@ jobs:
           versioned_dags_to_deploy=()
 
 
+          if [[ "$DAG_LIST" == '*' ]]; then
+            for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
+              filename=$(basename "$file" .py)
+              found_dags+=("$filename") # Append the found file to the array
+            done
+          else
+            for item in $(echo "$DAG_LIST" | tr ',' ' '); do
+              for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
+                filename=$(basename "$file" .py)
+                found_dags+=("$filename") # Append the found file to the array
+              done
+            done
+          fi
+
+
+          echo "$found_dags"
+
           
           
       - name: Print
