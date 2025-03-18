@@ -213,14 +213,13 @@ jobs:
           for path in $dags; do
             file_name=$(basename "$path" .py)
             python modify_dag_version.py "$path" "${{ steps.get-gitref.outputs.git_ref }}"
-            echo "$file DAGs updated version to: ${{ steps.get-gitref.outputs.git_ref }} " >> $GITHUB_STEP_SUMMARY
+            echo "$file_name DAG updated to version: ${{ steps.get-gitref.outputs.git_ref }} " >> $GITHUB_STEP_SUMMARY
           done
 
       - name: Configure Git User
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git pull 
           
       - name: Commit files
         run: |
