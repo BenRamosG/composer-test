@@ -35,7 +35,7 @@ jobs:
         run: |
 
           path_files=""
-          echo "# Files not founded" >> $GITHUB_STEP_SUMMARY
+          echo "## Files not founded" >> $GITHUB_STEP_SUMMARY
 
           IFS=',' read -ra file_array <<< "$(echo "${{ github.event.inputs.files }}" | tr -d ' ')"
           
@@ -45,7 +45,7 @@ jobs:
             path=$(find tir-bigquery/ -type f -name "$file_no_spaces.sql")
 
             if [ -z $path ]; then
-              echo "$file_no_spaces is not founded" >> $GITHUB_STEP_SUMMARY
+              echo "#### :x: $file_no_spaces is not founded" >> $GITHUB_STEP_SUMMARY
             else
               if [ -z $path_files ]; then
                 path_files="$path"
