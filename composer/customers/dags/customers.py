@@ -13,7 +13,7 @@ import json
 import os
 
 
-dag_version = "dev-b3dc36d"
+dag_version = "dev-b15cb14"
 
 args = {
      'retries': 3,
