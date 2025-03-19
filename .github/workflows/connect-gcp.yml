@@ -29,19 +29,51 @@ jobs:
         shell: bash
         run: gsutil ls
 
-
-      - name: Take Git Ref
-        id: get-ref
+      - name: Test
         run: |
-          dag_list="groups,customers"
-
-          for item in $(echo "$dag_list" | tr ',' ' '); do
-            echo "Processing: $item"
-            #Add your logic here for each item
+          POLL_PERIOD=5            # Poll every minute
+          WHILE_TIMEOUT=$((60*15)) # 15 minutes
+          ELAPSED=0                # Runtime
+          
+          dags="customers_dev-7906f78 groups_dev-7906f78"
+          new_var_paths=""
+          
+          
+          while true; do
+          
+              # Check for timeout
+              if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
+                  echo "State polling timed out."
+                  exit 1
+              fi
+          
+              sleep $POLL_PERIOD
+              ELAPSED=$((ELAPSED + POLL_PERIOD))
+              
+              echo "Dag to check: $dags"
+          
+              for dag_id in $dags; do
+                  composer_dags=$(gcloud composer environments run instance2 --location=us-central1 dags list -- --output=json | jq "[.[] | select(.dag_id == \"$dag_id\")] | length ")
+                  echo $composer_dags
+              
+                  if [[ "$composer_dags" -eq 0 ]]; then
+                      if [ -z $new_var_paths]; then
+                          new_var_paths="$dag_id"
+                      else
+                          new_var_paths="$new_var_paths $dag_id"
+                      fi
+                  else
+                    echo "$dag_is is deployed correctly" >> $GITHUB_STEP_SUMMARY
+                  fi    
+              done
+              
+              dags=$new_var_paths
+                 
+              if [ -z $new_var_paths ]; then
+                  break
+              fi
           done
-
-          echo "$dags_to_deploy"
+                    
           
-
-
           
+                    
