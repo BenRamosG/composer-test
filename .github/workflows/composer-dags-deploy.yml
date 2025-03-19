@@ -219,7 +219,7 @@ jobs:
           for path in $dags; do
             file_name=$(basename "$path" .py)
 
-            dagfile_content=$(cat "$master_path")
+            dagfile_content=$(cat "$path")
 
             dagfile_content=$(echo "$dagfile_content" | sed "s/dag_version *= *\"default\"/dag_version = \"$DAG_VERSION\"/g")
 
