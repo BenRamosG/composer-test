@@ -268,7 +268,7 @@ jobs:
                     echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
                   fi
 
-                  errors=$(gcloud composer environments run ${{ needs.review.outputs.composer_environment_name }} --location=${{ needs.review.outputs.region }} dags list-import-errors -- --output=json) || echo "$errors"
+                  errors=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} dags list-import-errors -- --output=json) || echo "$errors"
                   is_empty=$(echo "$errors" | jq 'length')
 
                   if [[ "$is_empty" -ne 0 ]]; then
