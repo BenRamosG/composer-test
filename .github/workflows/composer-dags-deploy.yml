@@ -206,6 +206,9 @@ jobs:
 
           space_separated=$(IFS=' '; echo "${found_dags_complete[*]}")
           echo "dags_path=$space_separated" >> $GITHUB_OUTPUT
+
+          versions=$(IFS=' '; echo "${versioned_dags_to_deploy[*]}")
+          echo "dag_new_versions=$versions" >> GITHUB_OUTPUT
           
       - name: Modify dag_version
         run: |
@@ -248,4 +251,8 @@ jobs:
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
           echo "${{ steps.get-gitref.outputs.git_ref }}"
-          
+
+          dags=${{ steps.new-versions.outputs.dag_new_versions }}
+          for dag in $dags; do
+            echo "$dag"
+          done
