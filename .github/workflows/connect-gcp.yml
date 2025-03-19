@@ -18,12 +18,14 @@ jobs:
         run: |
           files="StgProvideraaa, StgProvider"
 
+          # Convert the string to an array
           IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
           
-          for file in "${file_array[@]}";
-            echo "$file"
+          # Iterate through the array using a for loop
+          for file in "${file_array[@]}"; do
+            string_no_spaces=$(echo "$file" | tr -d ' ')
+            echo $string_no_spaces
           done
                     
-          
           
                     
