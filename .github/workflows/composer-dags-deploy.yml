@@ -252,7 +252,8 @@ jobs:
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
           echo "${{ steps.get-gitref.outputs.git_ref }}"
 
-          dags=${{ steps.new-versions.outputs.dag_new_versions }}
+          dags="${{ steps.new-versions.outputs.dag_new_versions }}"
+          echo "$dags"
           for dag in $dags; do
             echo "$dag"
           done
