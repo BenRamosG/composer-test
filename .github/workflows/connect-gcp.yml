@@ -16,8 +16,17 @@ jobs:
 
       - name: Test
         run: |
-          find tir-bigquery/ -type f -name "StgProvideraaa.sql"
+          files="StgProvideraaa, StgProvider"
 
+          IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
+          
+          for $file in "$file_array[@]}"; do
+            path=$(find tir-bigquery/ -type f -name "$file.sql")
+
+            if [ -z $path ]; then
+              echo $path
+            fi
+          done
                     
           
           
