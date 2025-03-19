@@ -16,7 +16,7 @@ jobs:
 
       - name: Test
         run: |
-          files="StgProvideraaa, StgProvider"
+          files="StgProvideraaa, StgProvider,query "
           path_files=""
 
           IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
