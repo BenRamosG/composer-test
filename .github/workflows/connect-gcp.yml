@@ -24,7 +24,12 @@ jobs:
           # Iterate through the array using a for loop
           for file in "${file_array[@]}"; do
             string_no_spaces=$(echo "$file" | tr -d ' ')
-            echo $string_no_spaces
+
+            path=$(find tir-bigquery/ -type f -name "$string_no_spaces.sql")
+
+            echo $path
+
+            
           done
                     
           
