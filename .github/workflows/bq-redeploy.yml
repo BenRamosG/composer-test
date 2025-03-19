@@ -33,6 +33,27 @@ jobs:
 
       - name: BQ Re-Deployment
         run: |
+
+          path_files=""
+
+          IFS=',' read -ra file_array <<< "$(echo "${{ github.event.inputs.files }}" | tr -d ' ')"
+          
+          for file in "${file_array[@]}"; do
+            file_no_spaces=$(echo "$file" | tr -d ' ')
+
+            path=$(find tir-bigquery/ -type f -name "$file_no_spaces.sql")
+
+            if [ -z $path ]; then
+              echo "$file_no_spaces is not founded" >> $GITHUB_STEP_SUMMARY
+            else
+              if [ -z $path_files ]; then
+                path_files="$path"
+              else
+                path_files="$path_files,$path"
+              fi
+            fi
+          done
+        
           pip install -r .github/workflows/requirements.txt
-          errors=$(python .github/workflows/bq_deploy.py --env="dev" --configs="project_id=telus-tir-project" --location="us" --files="${{ github.event.inputs.files }}")
+          errors=$(python .github/workflows/bq_deploy.py --env="dev" --configs="project_id=telus-tir-project" --location="us" --files="$path_files")
           echo "$errors" >> $GITHUB_STEP_SUMMARY
