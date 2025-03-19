@@ -245,8 +245,52 @@ jobs:
           done
 
 
+      - name: Poll process
+        run: |
 
+          POLL_PERIOD=5            # Poll every minute
+          WHILE_TIMEOUT=$((60*15)) # 15 minutes
+          ELAPSED=0                # Runtime
           
+          dags="${{ steps.new-versions.outputs.dag_new_versions }}"
+          new_var_paths=""
+          
+          while true; do
+          
+              # Check for timeout
+              if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
+                  echo "State polling timed out."
+                  echo "State polling timed out." >> $GITHUB_STEP_SUMMARY
+                  exit 1
+              fi
+          
+              sleep $POLL_PERIOD
+              ELAPSED=$((ELAPSED + POLL_PERIOD))
+              
+              echo "Dag to check: $dags"
+          
+              for dag_id in $dags; do
+                  composer_dags=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$dag_id\")] | length ")
+                  echo $composer_dags
+              
+                  if [[ "$composer_dags" -eq 0 ]]; then
+                      if [ -z $new_var_paths]; then
+                          new_var_paths="$dag_id"
+                      else
+                          new_var_paths="$new_var_paths $dag_id"
+                      fi
+                  else
+                    echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
+                  fi    
+              done
+              dags=$new_var_paths
+              
+              if [ -z $new_var_paths ]; then
+                  break
+              fi
+          done
+
+        
       - name: Print
         run: |
           echo "${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}"
