@@ -16,7 +16,7 @@ jobs:
 
       - name: Test
         run: |
-          find tir-bigquery/ -type f -name "StgProvider.sql"
+          find tir-bigquery/ -type f -name "StgProvideraaa.sql"
 
                     
           
