@@ -7,7 +7,7 @@ from airflow.operators.dummy import DummyOperator
 import logging
 
 
-dag_version = "dev-44c9e09"
+dag_version = "dev-af1b372"
 
 
 try:
