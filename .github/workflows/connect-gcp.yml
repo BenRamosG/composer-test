@@ -63,7 +63,7 @@ jobs:
                           new_var_paths="$new_var_paths $dag_id"
                       fi
                   else
-                    echo "$dag_is is deployed correctly" >> $GITHUB_STEP_SUMMARY
+                    echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
                   fi    
               done
               
