@@ -4,25 +4,31 @@ from airflow.models import Variable
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.operators.dummy import DummyOperator
+import logging
 
 
 dag_version = "dev-44c9e09"
 
 
+try:
+    # dag_ids is a Python dict object. Do not treat as a JSON object 
+    dag_ids = Variable.get("dags_version", default_var="Error with dags_version Airflow variable", deserialize_json=True)
+    logging.info("Fetched DAG ids from Airflow env variable: {}".format(str(dag_ids)))
+
+except Exception as e:
+    logging.error("Error when fetching dags_version variable from Airflow: {}".format(str(e)))
+
 reload_audit_table=f"SELECT 'Execute audit table procedure';"
 
 default_args = {
-    'owner': 'THDP-TIR',
+    'owner': 'master',
     'schedule':"0 4 * * *",
     'depends_on_past': False,
     'retries': 1, # Unlike rest of the DAGs, master dag has no automatic retries
 }
 
 
-child_dags_ids = {} # Fetch these from the other dag files
-
-
-with DAG("master" + "_" +  dag_version,
+with DAG(dag_ids["master"],
 default_args=default_args,
 start_date= datetime(2025,3,12),
 catchup=False,
@@ -31,7 +37,7 @@ schedule='0 4 * * *') as dag:
     
     Groups_process_ = TriggerDagRunOperator(
         task_id = 'groups_process',
-        trigger_dag_id="groups" + "_" + "1.0.11", # Replace for child_dags_ids{"groups"} 
+        trigger_dag_id=dag_ids["groups"], 
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
@@ -39,7 +45,7 @@ schedule='0 4 * * *') as dag:
 
     Users_process_ = TriggerDagRunOperator(
         task_id = 'users_process',
-        trigger_dag_id="users" + "_" + "1.0.3", # Replace for child_dags_ids{"users"}
+        trigger_dag_id=dag_ids["users"],
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
@@ -58,7 +64,7 @@ schedule='0 4 * * *') as dag:
 
     Customers_process_ = TriggerDagRunOperator(
         task_id = 'customers_process',
-        trigger_dag_id="customers" + "_" + "1.1.4", # Replace for child_dags_ids{"customers"}
+        trigger_dag_id=dag_ids["customers"],
         wait_for_completion=True,
         deferrable=True,
         dag=dag,
