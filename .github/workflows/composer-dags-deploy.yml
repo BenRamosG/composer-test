@@ -212,37 +212,19 @@ jobs:
           versions_separated=$(IFS=' '; echo "${versioned_dags_to_deploy[*]}")
           echo "dag_new_versions=$versions_separated" >> $GITHUB_OUTPUT
 
-      - name: Modify dag_version
-        run: |
-          dags="${{ steps.new-versions.outputs.dags_path }}"
-          for path in $dags; do
-            file_name=$(basename "$path" .py)
-            python modify_dag_version.py "$path" "${{ steps.get-gitref.outputs.git_ref }}"
-            echo "$file_name DAG updated to version: ${{ steps.get-gitref.outputs.git_ref }} " >> $GITHUB_STEP_SUMMARY
-          done
-
-      - name: Configure Git User
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-      - name: Commit files
-        run: |
-          git add .
-          git commit -m "GITHUB-ACTION: Update version DAG"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-
       - name: Dags into GCP
         run: |
+          DAG_VERSION=${{ steps.get-gitref.outputs.git_ref }}
           dags="${{ steps.new-versions.outputs.dags_path }}"
           for path in $dags; do
             file_name=$(basename "$path" .py)
-            gcloud storage cp "$path" ${{ steps.master-variables.outputs.composer_gcs_bucket }}/$file_name/dags/
+
+            dagfile_content=$(cat "$path")
+
+            dagfile_content=$(echo "$dagfile_content" | sed "s/dag_version *= *\"default\"/dag_version = \"$DAG_VERSION\"/g")
+
+            echo "$dagfile_content" | gcloud storage cp - ${{ steps.master-variables.outputs.composer_gcs_bucket }}/${file_name}/dags/${file_name}.py
+
             echo "$path move into: ${{ steps.master-variables.outputs.composer_gcs_bucket }} " >> $GITHUB_STEP_SUMMARY
           done
 
@@ -284,7 +266,16 @@ jobs:
                       fi
                   else
                     echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
-                  fi    
+                  fi
+
+                  errors=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} dags list-import-errors -- --output=json) || echo "$errors"
+                  is_empty=$(echo "$errors" | jq 'length')
+
+                  if [[ "$is_empty" -ne 0 ]]; then
+                    echo "Found errors in Airflow DAGs."
+                    exit 1
+                  fi
+
               done
               dags=$new_var_paths
               
