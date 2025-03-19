@@ -9,71 +9,35 @@ jobs:
       contents: read
 
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - id: auth
-        name: Google Cloud Auth
-        uses: google-github-actions/auth@v2
-        with:
-          create_credentials_file: true
-          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
-          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
-
-      - name: set credentials file
-        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-
-      - name: Read buckets
-        shell: bash
-        run: gsutil ls
+        uses: actions/checkout@v4
 
       - name: Test
         run: |
-          POLL_PERIOD=5            # Poll every minute
-          WHILE_TIMEOUT=$((60*15)) # 15 minutes
-          ELAPSED=0                # Runtime
+          files="StgProvideraaa, StgProvider,query "
+          path_files=""
+
+          IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
           
-          dags="customers_dev-7906f78 groups_dev-7906f78"
-          new_var_paths=""
-          
-          
-          while true; do
-          
-              # Check for timeout
-              if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
-                  echo "State polling timed out."
-                  exit 1
+          for file in "${file_array[@]}"; do
+            file_no_spaces=$(echo "$file" | tr -d ' ')
+
+            path=$(find tir-bigquery/ -type f -name "$file_no_spaces.sql")
+
+            if [ -z $path ]; then
+              echo "$file_no_spaces is not founded" >> $GITHUB_STEP_SUMMARY
+            else
+              if [ -z $path_files ]; then
+                path_files="$path"
+              else
+                path_files="$path_files,$path"
               fi
-          
-              sleep $POLL_PERIOD
-              ELAPSED=$((ELAPSED + POLL_PERIOD))
-              
-              echo "Dag to check: $dags"
-          
-              for dag_id in $dags; do
-                  composer_dags=$(gcloud composer environments run instance2 --location=us-central1 dags list -- --output=json | jq "[.[] | select(.dag_id == \"$dag_id\")] | length ")
-                  echo $composer_dags
-              
-                  if [[ "$composer_dags" -eq 0 ]]; then
-                      if [ -z $new_var_paths]; then
-                          new_var_paths="$dag_id"
-                      else
-                          new_var_paths="$new_var_paths $dag_id"
-                      fi
-                  else
-                    echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
-                  fi    
-              done
-              
-              dags=$new_var_paths
-                 
-              if [ -z $new_var_paths ]; then
-                  break
-              fi
+            fi
           done
+
+          echo "Salida: $path_files"
                     
-          
           
                     
