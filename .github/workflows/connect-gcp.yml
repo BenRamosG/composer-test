@@ -20,7 +20,7 @@ jobs:
 
           IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
           
-          for $file in "$file_array[@]}"; do
+          for file in "${file_array[@]}";
             path=$(find tir-bigquery/ -type f -name "$file.sql")
 
             if [ -z $path ]; then
