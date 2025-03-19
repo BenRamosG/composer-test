@@ -266,11 +266,11 @@ jobs:
           
               sleep $POLL_PERIOD
               ELAPSED=$((ELAPSED + POLL_PERIOD))
+              new_var_paths=""
               
               echo "Dag to check: $dags"
           
               for dag_id in $dags; do
-                  new_var_paths=""
                   composer_dags=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$dag_id\")] | length ")
                   echo $composer_dags
               
