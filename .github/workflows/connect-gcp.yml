@@ -14,30 +14,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test
-        run: |
-          files="StgProvideraaa, StgProvider,query "
-          path_files=""
 
-          IFS=',' read -ra file_array <<< "$(echo "$files" | tr -d ' ')"
-          
-          for file in "${file_array[@]}"; do
-            file_no_spaces=$(echo "$file" | tr -d ' ')
-
-            path=$(find tir-bigquery/ -type f -name "$file_no_spaces.sql")
-
-            if [ -z $path ]; then
-              echo "$file_no_spaces is not founded" >> $GITHUB_STEP_SUMMARY
-            else
-              if [ -z $path_files ]; then
-                path_files="$path"
-              else
-                path_files="$path_files,$path"
-              fi
-            fi
-          done
-
-          echo "Salida: $path_files"
-                    
-          
-                    
+      - id: auth
+        name: Google Cloud Auth
+        uses: google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: "projects/979545525341/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc"
+          service_account: "github-composer@telus-tir-project.iam.gserviceaccount.com"
+ 
+      - name: set credentials file
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+ 
+      - name: Read buckets
+        shell: bash
+        run: gsutil ls
