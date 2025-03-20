@@ -153,7 +153,7 @@ jobs:
           # Iterate through the array of found dags to add deploy-specific ID
           if [[ ${#found_dags[@]} -gt 0 ]]; then
               for found_dag in "${found_dags[@]}"; do
-                  versioned_dags_to_deploy+=("${found_dag}_${DAG_ID_SUFFIX}")
+                  versioned_dags_to_deploy+=("${DAG_ID_SUFFIX}")
               done
           else
               echo "::error::No matching DAG files found. Review your repository files"
