@@ -11,7 +11,7 @@ import json
 import os
 
 
-dag_version = "default"
+dag_version = ""
 
 
 args = {
@@ -21,7 +21,7 @@ args = {
 
 
 
-with DAG("groups" + "_" +  dag_version,
+with DAG(f"groups_{dag_version}",
          start_date= datetime(2025,3,8),
          schedule= "0 4 * * *",
          catchup= False,
