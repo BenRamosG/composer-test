@@ -29,7 +29,6 @@ jobs:
       - name: Read buckets
         shell: bash
         run: | 
-          salida=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>&1)
-          exit_code=$?
+          salida=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>&1 || true)
 
           echo "$salida"
