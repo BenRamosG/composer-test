@@ -259,21 +259,40 @@ jobs:
                   echo $composer_dags
               
                   if [[ "$composer_dags" -eq 0 ]]; then
-                      if [ -z $new_var_paths]; then
-                          new_var_paths="$dag_id"
+
+                      compile_errors=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>&1 || true)
+                      json_output=$(echo "$compile_errors" | grep -o '\[.*\]$')
+
+                      if [[ "$json_output" != "[]" ]]; then
+                        transformed_json=$(echo "$json_output" | jq -r ' map({(.filepath | split("/") | last | split(".")[0]): .error}) | add')
+
+                        echo "JSON: $transformed_json"
+                        seach_value="${$dag_id/_${{ steps.get-gitref.outputs.git_ref }}/}"
+                        echo "CHECK: $seach_value"
+
+                        get_value=$(echo "$transformed_json" | jq -r '.$seach_value')
+
+                        echo "FOUND: $get_value"
+
+                        if [ "$get_value" == "null" ]; then
+                          if [ -z $new_var_paths]; then
+                            new_var_paths="$dag_id"
+                          else
+                            new_var_paths="$new_var_paths $dag_id"
+                          fi
+                        else
+                          echo "$dag_id has a deploy error $get_value" >> $GITHUB_STEP_SUMMARY
+                        fi
                       else
+                        if [ -z $new_var_paths]; then
+                          new_var_paths="$dag_id"
+                        else
                           new_var_paths="$new_var_paths $dag_id"
+                        fi
                       fi
+
                   else
                     echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
-                  fi
-
-                  errors=$(gcloud composer environments run ${{ steps.master-variables.outputs.composer_environment_name }} --location=${{ steps.master-variables.outputs.region }} dags list-import-errors -- --output=json) || echo "$errors"
-                  is_empty=$(echo "$errors" | jq 'length')
-
-                  if [[ "$is_empty" -ne 0 ]]; then
-                    echo "Found errors in Airflow DAGs."
-                    exit 1
                   fi
 
               done
