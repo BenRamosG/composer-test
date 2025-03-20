@@ -14,7 +14,6 @@ on:
 
 jobs:
   connect:
-    environment: ${{ inputs.environment }}
     permissions:
       id-token: write
       contents: read
