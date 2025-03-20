@@ -11,7 +11,7 @@ import json
 import os
 
 
-dag_version = ""
+dag_version = "default"
 
 
 args = {
