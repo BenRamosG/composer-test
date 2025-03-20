@@ -158,8 +158,7 @@ jobs:
           for i in "${!found_dags[@]}"; do
             key="${found_dags[$i]}"
             value="${{ steps.get-gitref.outputs.git_ref }}"
-            # value="${versioned_dags_to_deploy[$i]}"
-
+            
             # Add comma separator (except for the last element)
             if [[ $i -lt $(( ${#found_dags[@]} - 1 )) ]]; then
               deploying_dags_json+="\"$key\":\"$value\","
@@ -171,4 +170,4 @@ jobs:
           
           deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format       
 
-          echo "SALIDA: $deploy_dags_jq"
+          echo "SALIDA: $deploying_dags_json"
