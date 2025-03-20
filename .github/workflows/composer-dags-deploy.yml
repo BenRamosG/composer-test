@@ -260,7 +260,7 @@ jobs:
               
                   if [[ "$composer_dags" -eq 0 ]]; then
 
-                      compile_errors=$(gcloud composer environments run instance --location=us-central1 dags list-import-errors -- --output=json 2>&1 || true)
+                      compile_errors=$(gcloud composer environments run instance2 --location=us-central1 dags list-import-errors -- --output=json 2>&1 || true)
                       json_output=$(echo "$compile_errors" | grep -o '\[.*\]$')
 
                       if [[ "$json_output" != "[]" ]]; then
