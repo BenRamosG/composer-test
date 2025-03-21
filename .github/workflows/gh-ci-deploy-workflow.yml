@@ -132,7 +132,7 @@ jobs:
             for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
               filename=$(basename "$file" .py)
               found_dags_complete+=("$file") # Append the found file to the array
-              found_dags+=("$filename") # Append the found file to the array
+              found_dags+=("$filename") # Append the found file complete path to the array
             done
 
           else
@@ -143,7 +143,7 @@ jobs:
               for file in $(find "$search_dir" -type f -path "*/${item}/dags/${item}.py"); do
                 filename=$(basename "$file" .py)
                 found_dags_complete+=("$file") # Append the found file to the array
-                found_dags+=("$filename") # Append the found file to the array
+                found_dags+=("$filename") # Append the found file complete path to the array
               done
             done
           fi
@@ -227,4 +227,81 @@ jobs:
 
             echo "$path move into: ${{ vars.COMPOSER_GCS_BUCKET }} " >> $GITHUB_STEP_SUMMARY
           done
+
+
+      - name: Polling process
+        run: |
+
+          POLL_PERIOD=5            # Poll every 5 seconds
+          WHILE_TIMEOUT=$((60*15)) # 15 minutes
+          ELAPSED=0                # Runtime
+          
+          dags="${{ steps.new-versions.outputs.dag_new_versions }}"
+          new_var_paths=""
+          
+          while true; do
+          
+              # Check for timeout
+              if [ "$ELAPSED" -ge "$WHILE_TIMEOUT" ]; then
+                  echo "State polling timed out."
+                  echo "State polling timed out." >> $GITHUB_STEP_SUMMARY
+                  exit 1
+              fi
+          
+              sleep $POLL_PERIOD
+              ELAPSED=$((ELAPSED + POLL_PERIOD))
+              new_var_paths=""
+              
+              echo "Dag to check: $dags"
+          
+              for dag_id in $dags; do
+                  composer_dags=$(gcloud composer environments run ${{ vars.COMPOSER_ENVIRONMENT_NAME }} --location=${{ vars.COMPOSER_REGION }} dags list -- --output=json | jq "[.[] | select(.dag_id == \"$dag_id\")] | length ")
+                  echo $composer_dags
+              
+                  if [[ "$composer_dags" -eq 0 ]]; then
+
+                      compile_errors=$(gcloud composer environments run ${{ vars.COMPOSER_ENVIRONMENT_NAME }} --location=${{ vars.COMPOSER_REGION }} dags list-import-errors -- --output=json 2>&1 || true)
+                      json_output=$(echo "$compile_errors" | grep -o '\[.*\]$')
+
+                      if [[ "$json_output" != "[]" ]]; then
+                        transformed_json=$(echo "$json_output" | jq -r ' map({(.filepath | split("/") | last | split(".")[0]): .error}) | add')
+
+                        echo "JSON: $transformed_json"
+                        seach_value="${$dag_id/_${{ steps.get-gitref.outputs.git_ref }}/}"
+                        echo "CHECK: $seach_value"
+
+                        get_value=$(echo "$transformed_json" | jq -r '.$seach_value')
+
+                        echo "FOUND: $get_value"
+
+                        if [ "$get_value" == "null" ]; then
+                          if [ -z $new_var_paths]; then
+                            new_var_paths="$dag_id"
+                          else
+                            new_var_paths="$new_var_paths $dag_id"
+                          fi
+                        else
+                          echo "$dag_id has a deploy error $get_value" >> $GITHUB_STEP_SUMMARY
+                        fi
+                      else
+                        if [ -z $new_var_paths]; then
+                          new_var_paths="$dag_id"
+                        else
+                          new_var_paths="$new_var_paths $dag_id"
+                        fi
+                      fi
+
+                  else
+                    echo "$dag_id is deployed correctly" >> $GITHUB_STEP_SUMMARY
+                  fi
+
+              done
+              dags=$new_var_paths
+              
+              if [ -z $new_var_paths ]; then
+                  break
+              fi
+          done
+
+        
 
