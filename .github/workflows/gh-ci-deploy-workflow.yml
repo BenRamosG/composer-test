@@ -128,15 +128,34 @@ jobs:
           versioned_dags_to_deploy=()
 
 
-          IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
-          for item in "${dags_to_deploy[@]}"; do
-            file=$(find composer/ -type f -name "$item.py")
-            filename=$(basename "$file" .py)
+          if [[ "$DAG_LIST" == '*' ]]; then
+            for file in $(find "$search_dir" -type f -path "*/dags/*.py"); do
+              filename=$(basename "$file" .py)
+              found_dags_complete+=("$file") # Append the found file to the array
+              found_dags+=("$filename") # Append the found file complete path to the array
+            done
+          else
+            IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
+            for item in "${dags_to_deploy[@]}"; do
+              file=$(find composer/ -type f -name "$item.py")
+              filename=$(basename "$file" .py)
+  
+              found_dags_complete+=("$file") # Append the found file to the array
+              found_dags+=("$filename") # Append the found file complete path to the array
+            done
+          fi
 
-            echo "$file"
-            echo "$filename"
+
+          for found_dag in "${found_dags[@]}"; do
+            echo "$found_dag"
           done
 
+          for found_dag in "${found_dags_complete[@]}"; do
+            echo "$found_dag"
+          done
+
+
+          
           
 
 
