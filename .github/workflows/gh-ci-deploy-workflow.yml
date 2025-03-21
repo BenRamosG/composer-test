@@ -182,5 +182,7 @@ jobs:
           deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format  
 
 
-          echo "$deploy_dags_jq"
+          for found_dag in "${versioned_dags_to_deploy[@]}"; do
+            echo "$found_dag"
+          done
 
