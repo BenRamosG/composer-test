@@ -26,7 +26,7 @@ with DAG(f"master_dag_{dag_version}",
          
     Reference_process_ = TriggerDagRunOperator(
     task_id='reference_process',
-    trigger_dag_id=f"reference_process_{dag_ids["reference_load"]}",
+    trigger_dag_id=f"reference_{dag_ids["reference"]}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -50,7 +50,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Groups_ = TriggerDagRunOperator(
     task_id='groups',
-    trigger_dag_id=f"groups_{dag_ids["groups_process"]}",
+    trigger_dag_id=f"groups_{dag_ids["groups"]}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -58,7 +58,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Diseases_Products_Process_ = TriggerDagRunOperator(
     task_id='diseases_products_process',
-    trigger_dag_id=f"diseases_products_process_{dag_ids["diseases_products"]}",
+    trigger_dag_id=f"diseases_products_{dag_ids["diseases_products"]}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -91,7 +91,7 @@ with DAG(f"master_dag_{dag_version}",
 
     DW_Segment_Process_ = TriggerDagRunOperator(
     task_id='dw_segment_process',
-    trigger_dag_id=f"dw_segment_process_{dag_ids["dw_segment"]}",
+    trigger_dag_id=f"dw_segment_{dag_ids["dw_segment"]}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
