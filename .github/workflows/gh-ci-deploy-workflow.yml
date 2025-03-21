@@ -130,8 +130,11 @@ jobs:
 
           IFS=',' read -ra dags_to_deploy <<< "$DAG_LIST" # Convert comma-separated string to an array
           for item in "${dags_to_deploy[@]}"; do
-            path=$(find composer/ -type f -name "$item.py")
-            echo "$path"
+            file=$(find composer/ -type f -name "$item.py")
+            filename=$(basename "$file" .py)
+
+            echo "$file"
+            echo "$filename
           done
 
           
