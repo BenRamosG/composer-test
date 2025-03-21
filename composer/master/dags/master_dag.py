@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
+dags_ids = Variable.get("dags_version", deserialize_json=True)
 
 dag_version = "default"
 
