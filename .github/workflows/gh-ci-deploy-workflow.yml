@@ -212,11 +212,21 @@ jobs:
           echo "dag_new_versions=$versions_separated" >> $GITHUB_OUTPUT
 
 
+      - name: Dags into GCP
+        run: |
+          DAG_VERSION=${{ steps.get-gitref.outputs.git_ref }}
+          dags="${{ steps.new-versions.outputs.dags_path }}"
+          for path in $dags; do
+            file_name=$(basename "$path" .py)
 
-          for found_dag in "${versioned_dags_to_deploy[@]}"; do
-            echo "$found_dag"
+            dagfile_content=$(cat "$path")
+
+            dagfile_content=$(echo "$dagfile_content" | sed "s/dag_version *= *\"default\"/dag_version = \"$DAG_VERSION\"/g")
+
+            echo "$dagfile_content" | gcloud storage cp - gs://${{ vars.COMPOSER_GCS_BUCKET }}/dags/${file_name}/dags/${file_name}.py
+
+            echo "$path move into: ${{ vars.COMPOSER_GCS_BUCKET }} " >> $GITHUB_STEP_SUMMARY
           done
-
 
 
           
