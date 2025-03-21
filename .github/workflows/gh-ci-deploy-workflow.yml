@@ -181,10 +181,36 @@ jobs:
           deploy_dags_jq=$(echo "$deploying_dags_json" | jq -c '.') # Convert JSON string to jq-readable format  
 
 
+          if [[ "$FLAG_CREATE_DAGS_VS" == "true" ]]; then 
+            echo "Creating dags_version var: $deploying_dags_json"
+            gcloud composer environments run ${{ vars.COMPOSER_ENVIRONMENT_NAME }} --location=${{ vars.COMPOSER_REGION }} variables set -- dags_version "$deploying_dags_json"
 
+          else
+            echo "Updating dags_version var"
+            current_dags_jq=$(echo "$CURRENT_DAGS_VS" | jq -c '.') # Convert JSON string to jq-readable format
 
-          echo "$deploy_dags_jq"
-          
+            echo "Current DAGs versions: $current_dags_jq " >> $GITHUB_STEP_SUMMARY
+            echo "Current DAGs Version (from Airflow): $current_dags_jq"
+            echo "$current_dags_jq" > "current_version.json"
+
+            echo "DAGs versions to update: $deploying_dags_json " >> $GITHUB_STEP_SUMMARY
+            echo "New DAGs Version (from Workflow): $deploying_dags_json"
+            echo "$deploying_dags_json" > "new_version.json"
+            
+            updated_dags_json=$(jq -s '.[0] * .[1]' current_version.json new_version.json)
+            
+            deploying_dags_json="$updated_dags_json" # Make this the unique JSON to work with going forward with this script
+
+            gcloud composer environments run ${{ vars.COMPOSER_ENVIRONMENT_NAME }} --location=${{ vars.COMPOSER_REGION }} variables set -- dags_version "$deploying_dags_json"
+            echo "DAGs new version file: $deploying_dags_json" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          space_separated=$(IFS=' '; echo "${found_dags_complete[*]}")
+          echo "dags_path=$space_separated" >> $GITHUB_OUTPUT
+
+          versions_separated=$(IFS=' '; echo "${versioned_dags_to_deploy[*]}")
+          echo "dag_new_versions=$versions_separated" >> $GITHUB_OUTPUT
+
 
 
           for found_dag in "${versioned_dags_to_deploy[@]}"; do
