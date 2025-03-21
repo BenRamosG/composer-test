@@ -134,7 +134,7 @@ jobs:
             filename=$(basename "$file" .py)
 
             echo "$file"
-            echo "$filename
+            echo "$filename"
           done
 
           
