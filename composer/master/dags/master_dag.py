@@ -27,7 +27,7 @@ with DAG(f"master_dag_{dag_version}",
          
     Reference_process_ = TriggerDagRunOperator(
     task_id='reference_process',
-    trigger_dag_id=f"reference_{dag_ids["reference"]}",
+    trigger_dag_id=f"reference_{dag_ids['reference']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -35,7 +35,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Pharmacy_process_ = TriggerDagRunOperator(
     task_id='pharmacy_process',
-    trigger_dag_id=f"pharmacy_process_{dag_ids["pharmacy_process"]}",
+    trigger_dag_id=f"pharmacy_process_{dag_ids['pharmacy_process']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -43,7 +43,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Provider_process_ = TriggerDagRunOperator(
     task_id='provider',
-    trigger_dag_id=f"provider_{dag_ids["provider"]}",
+    trigger_dag_id=f"provider_{dag_ids['provider']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -51,7 +51,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Groups_ = TriggerDagRunOperator(
     task_id='groups',
-    trigger_dag_id=f"groups_{dag_ids["groups"]}",
+    trigger_dag_id=f"groups_{dag_ids['groups']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -59,7 +59,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Diseases_Products_Process_ = TriggerDagRunOperator(
     task_id='diseases_products_process',
-    trigger_dag_id=f"diseases_products_{dag_ids["diseases_products"]}",
+    trigger_dag_id=f"diseases_products_{dag_ids['diseases_products']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -67,7 +67,7 @@ with DAG(f"master_dag_{dag_version}",
 
     cardholders_process_ = TriggerDagRunOperator(
     task_id='cardholders_process',
-    trigger_dag_id=f"cardholders_process_{dag_ids["cardholders_process"]}",
+    trigger_dag_id=f"cardholders_process_{dag_ids['cardholders_process']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -75,7 +75,7 @@ with DAG(f"master_dag_{dag_version}",
 
     paid_claim_process_ = TriggerDagRunOperator(
     task_id='paid_claim_process',
-    trigger_dag_id=f"paid_claim_process_{dag_ids["paid_claim_process"]}",
+    trigger_dag_id=f"paid_claim_process_{dag_ids['paid_claim_process']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -83,7 +83,7 @@ with DAG(f"master_dag_{dag_version}",
 
     olap_process_ = TriggerDagRunOperator(
     task_id='olap_process',
-    trigger_dag_id=f"olap_process_{dag_ids["olap_process"]}",
+    trigger_dag_id=f"olap_process_{dag_ids['olap_process']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -92,7 +92,7 @@ with DAG(f"master_dag_{dag_version}",
 
     DW_Segment_Process_ = TriggerDagRunOperator(
     task_id='dw_segment_process',
-    trigger_dag_id=f"dw_segment_{dag_ids["dw_segment"]}",
+    trigger_dag_id=f"dw_segment_{dag_ids['dw_segment']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
@@ -100,7 +100,7 @@ with DAG(f"master_dag_{dag_version}",
 
     Batch_IQVIA_Claim_Extract_Process_ = TriggerDagRunOperator(
     task_id='batch_iqvia_claim_extract',
-    trigger_dag_id=f"batch_iqvia_claim_extract_{dag_ids["batch_iqvia_claim_extract"]}",
+    trigger_dag_id=f"batch_iqvia_claim_extract_{dag_ids['batch_iqvia_claim_extract']}",
     wait_for_completion=True,
     deferrable=True,
     dag=dag,
