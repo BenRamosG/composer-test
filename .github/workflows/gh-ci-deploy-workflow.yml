@@ -146,13 +146,25 @@ jobs:
           fi
 
 
-          for found_dag in "${found_dags[@]}"; do
+          echo "DAGs to update: ${versioned_dags_to_deploy[@]} " >> $GITHUB_STEP_SUMMARY
+          
+          # Iterate through the array of found dags to add deploy-specific ID
+          if [[ ${#found_dags[@]} -gt 0 ]]; then
+              for found_dag in "${found_dags[@]}"; do
+                  versioned_dags_to_deploy+=("${found_dag}_${DAG_ID_SUFFIX}")
+              done
+          else
+              echo "::error::No matching DAG files found. Review your repository files"
+              exit 1
+          fi
+
+
+          
+
+          for found_dag in "${versioned_dags_to_deploy[@]}"; do
             echo "$found_dag"
           done
 
-          for found_dag in "${found_dags_complete[@]}"; do
-            echo "$found_dag"
-          done
 
 
           
