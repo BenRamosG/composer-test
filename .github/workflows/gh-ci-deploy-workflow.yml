@@ -184,7 +184,3 @@ jobs:
 
           echo "$deploy_dags_jq"
 
-          for i "${versioned_dags_to_deploy[@]}"; do
-            echo "$i"
-          do
-
