@@ -21,7 +21,7 @@ args = {
 
 
 
-with DAG(f"reference_process_{dag_version}",
+with DAG(f"reference_{dag_version}",
          start_date= datetime(2025,3,8),
          schedule= "0 4 * * *",
          catchup= False,
