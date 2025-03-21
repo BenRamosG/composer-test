@@ -114,6 +114,20 @@ jobs:
           fi
 
 
+          # Get new version and files to process.
+          DAG_ID_SUFFIX=${{ steps.get-gitref.outputs.git_ref }}
+          echo "DAGs will be added suffix: $DAG_ID_SUFFIX"
+          echo "DAGs new version will be: $DAG_ID_SUFFIX " >> $GITHUB_STEP_SUMMARY
+          DAG_LIST=${{ steps.validate-deploy-inputs.outputs.dags_to_deploy }}
+          echo "DAGs to deploy: $DAG_LIST"
+
+          # Find path DAGs to process
+          search_dir="$GITHUB_WORKSPACE/composer"
+          found_dags=()
+          found_dags_complete=()
+          versioned_dags_to_deploy=()
+
+
 
 
 
